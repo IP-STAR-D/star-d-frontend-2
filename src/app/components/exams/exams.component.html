@@ -1,0 +1,17 @@
+<main class="p-8">
+  <mat-grid-list cols="3" rowHeight="200px" gutterSize="64px">
+    <mat-grid-tile *ngFor="let exam of exams" [colspan]="1" [rowspan]="1">
+      <mat-card
+        class="grow h-48 justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+        (click)="redirectToExam(exam.id)"
+      >
+        <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
+          <h3 mat-card-title>{{ exam.title }}</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <p mat-card-subtitle>{{ exam.professor }}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</main>
