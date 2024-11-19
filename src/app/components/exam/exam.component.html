@@ -1,2 +1,33 @@
-<p>exam works!</p>
-<p>Exam ID: {{ id }}</p>
+<main class="p-8 flex items-center justify-center min-h-screen bg-gray-100">
+  <mat-card
+    class="grow max-w-md w-full justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+  >
+    <mat-card-header
+      class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white text-center"
+    >
+      {{ exam?.className }}
+    </mat-card-header>
+    <mat-card-content class="text-center">
+      {{ getProfessor(exam?.professorId)?.firstName }}
+      {{ getProfessor(exam?.professorId)?.lastName }}
+    </mat-card-content>
+    <mat-card-content>
+      <mat-form-field class="w-full">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <section class="example-button-row flex justify-center space-x-4">
+        <button mat-raised-button color="primary" (click)="accept()">Accept</button>
+        <button mat-raised-button color="warn" (click)="decline()">Delete</button>
+      </section>
+    </mat-card-actions>
+  </mat-card>
+</main>

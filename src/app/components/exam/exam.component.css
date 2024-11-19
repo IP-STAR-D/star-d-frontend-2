@@ -1,0 +1,29 @@
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f3f4f6; /* Culoare de fundal */
+  }
+  
+  mat-card {
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mat-card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .example-button-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+  
