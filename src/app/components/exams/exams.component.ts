@@ -37,8 +37,8 @@ export class ExamsComponent {
     this.router.navigate([`/exams/${examId}`]);
   }
 
-  getProfessorName(professorId: number): string {
+  getProfessor(professorId: number): User | null {
     const professor = this.users.find((p) => p.userId === professorId);
-    return professor ? `${professor.firstName} ${professor.lastName}` : '';
+    return professor ? professor : null;
   }
 }
