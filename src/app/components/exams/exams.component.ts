@@ -22,7 +22,7 @@ export class ExamsComponent {
   constructor(private router: Router) {}
 
   redirectToExam(examId: number): void {
-    this.router.navigate([`/exams/${examId}`]);
+    this.router.navigate([`user/student/exams/${examId}`]);
   }
 
   getProfessor(professorId: number): User | null {
