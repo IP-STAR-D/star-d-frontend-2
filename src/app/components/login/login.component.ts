@@ -31,7 +31,7 @@ export class LoginComponent {
     }
 
     if (user.email.includes('usm.com')) {
-      this.router.navigate(['/user/professor/classes']);
+      this.router.navigate(['/user/professor/appointments']);
     } else if (user.email.includes('student.usv.ro')) {
       this.router.navigate(['/user/student/exams']);
     } else {
