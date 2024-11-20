@@ -7,13 +7,11 @@ import { Exam } from '../../models/exam.model';
 import { User } from '../../models/user.model';
 import { usersData } from '../../data/user.data';
 import { examsData } from '../../data/exam.data';
-import { FooterComponent } from '../footer/footer.component';
-import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-exams',
   standalone: true,
-  imports: [CommonModule, MatGridListModule, MatCardModule,FooterComponent,HeaderComponent],
+  imports: [CommonModule, MatGridListModule, MatCardModule],
   templateUrl: './exams.component.html',
   styleUrl: './exams.component.css',
 })
