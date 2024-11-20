@@ -1,0 +1,40 @@
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+}
+
+mat-dialog-content {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.accept-button {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin:1.5rem;
+}
+
+.reject-button {
+    background-color: #f44336;
+    color: white;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+}
+
+.accept-button:hover,
+.reject-button:hover {
+    opacity: 0.9;
+}
+
+mat-dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
