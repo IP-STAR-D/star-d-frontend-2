@@ -14,12 +14,13 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-exam',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [CommonModule, MatGridListModule, MatCardModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, NgxMatTimepickerModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule,HeaderComponent, MatGridListModule, MatCardModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, NgxMatTimepickerModule, MatButtonModule, MatIconModule],
   templateUrl: './exam.component.html',
   styleUrl: './exam.component.css',
 })
