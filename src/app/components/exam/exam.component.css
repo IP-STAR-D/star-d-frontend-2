@@ -3,7 +3,9 @@ main {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background-color: #f3f4f6; /* Culoare de fundal */
+    background-color: white; /* Culoare de fundal */
+    height: 72vh;
+  
   }
   
   mat-card {
