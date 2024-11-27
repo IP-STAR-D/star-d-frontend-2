@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { usersData } from '../../data/user.data';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../services/user.service';
+import { HttpClientModule } from '@angular/common/http';
+import { User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -15,27 +19,33 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  users: any = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
-  authenticateUser(email: string, password: string): void {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Te rugăm să completezi toate câmpurile!';
-      return;
-    }
+  onLogin(): void {
+    console.log('Email trimis:', this.email);
+    console.log('Parola trimisă:', this.password);
+    this.authService.login(this.email, this.password).subscribe({
+      next: (response) => {
+        console.log('Răspuns server:', response);
 
-    const user = usersData.find((u) => u.email === this.email && u.password === this.password);
-    if (!user) {
-      this.errorMessage = 'Date incorecte';
-      return;
-    }
+        this.authService.saveToken(response.token);
 
-    if (user.email.includes('usm.com')) {
-      this.router.navigate(['/user/professor/appointments']);
-    } else if (user.email.includes('student.usv.ro')) {
-      this.router.navigate(['/user/student/exams']);
-    } else {
-      this.errorMessage = 'User necunoscut';
-    }
+        if (this.email.endsWith('student.usv.ro')) {
+          this.router.navigate(['/user/student/exams']);
+        } else if (this.email.endsWith('usm.com')) {
+          this.router.navigate(['/user/professor/appointments']);
+        } else if (this.email.endsWith('usv.ro')) {
+          this.router.navigate(['/user/professor/appointments']);
+        } else {
+          this.errorMessage = 'User necunoscut';
+        }
+      },
+      error: (err) => {
+        console.error('Eroare login:', err);
+        this.errorMessage = 'Email sau parolă invalidă!';
+      },
+    });
   }
 }
