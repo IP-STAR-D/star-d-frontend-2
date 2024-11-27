@@ -16,15 +16,15 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    sessionStorage.setItem('auth_token', token);
+    localStorage.setItem('auth_token', token);
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem('auth_token');
+    return localStorage.getItem('auth_token');
   }
 
   logout(): void {
-    sessionStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_token');
   }
 
   isAuthenticated(): boolean {
