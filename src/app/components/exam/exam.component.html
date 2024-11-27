@@ -1,4 +1,4 @@
-<main class="p-8 flex items-center justify-center min-h-screen bg-gray-100">
+<main class="p-8 flex items-center justify-center bg-gray-100">
   <mat-card
     class="grow max-w-md w-full justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
   >
@@ -16,10 +16,7 @@
         <mat-label>Choose a date</mat-label>
         <input matInput [matDatepicker]="picker" />
         <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="picker"
-        ></mat-datepicker-toggle>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </mat-card-content>
