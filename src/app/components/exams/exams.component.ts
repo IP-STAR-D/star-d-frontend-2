@@ -21,6 +21,8 @@ export class ExamsComponent {
 
   constructor(private router: Router) {}
 
+  
+
   redirectToExam(examId: number): void {
     this.router.navigate([`user/student/exams/${examId}`]);
   }
