@@ -26,8 +26,8 @@ export class LoginComponent {
 
 
   onLogin(): void {
-    console.log('Email trimis:', this.email);  // Logăm email-ul trimis
-    console.log('Parola trimisă:', this.password);  // Logăm parola trimisă
+    console.log('Email trimis:', this.email);  
+    console.log('Parola trimisă:', this.password); 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Răspuns server:', response);
