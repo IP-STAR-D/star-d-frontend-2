@@ -6,9 +6,10 @@ import { ClassComponent } from './components/class/class.component';
 import { LoginComponent } from './components/login/login.component';
 
 export const routes: Routes = [
-  {path:'',component:LoginComponent},
   { path: 'user/student/exams', component: ExamsComponent },
   { path: 'user/student/exams/:id', component: ExamComponent },
   { path: 'user/professor/appointments', component: AppointmentsComponent },
-  { path: 'auth',component: LoginComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' },
 ];

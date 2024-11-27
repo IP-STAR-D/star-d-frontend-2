@@ -4,20 +4,19 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = `${environment.apiUrl}/auth`;
 
-  private apiUrl = `${environment.apiUrl}/auth`; 
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
   saveToken(token: string): void {
-    sessionStorage.setItem('auth_token', token); 
+    sessionStorage.setItem('auth_token', token);
   }
 
   getToken(): string | null {
@@ -25,10 +24,10 @@ export class AuthService {
   }
 
   logout(): void {
-    sessionStorage.removeItem('auth_token'); 
+    sessionStorage.removeItem('auth_token');
   }
 
   isAuthenticated(): boolean {
-    return this.getToken() !== null; 
+    return this.getToken() !== null;
   }
 }
