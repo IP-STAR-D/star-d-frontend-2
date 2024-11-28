@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Exam } from '../models/exam.model';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +11,22 @@ import { Exam } from '../models/exam.model';
 export class ExamService {
   private apiUrl = `${environment.apiUrl}/exams`;
 
+  private getAuthHeaders() {
+    const token = localStorage.getItem('auth_token');
+    let headers = new HttpHeaders();
+
+    if (token) {
+      headers = headers.set('Authorization', token);
+    }
+
+    return headers;
+  }
+
   constructor(private http: HttpClient) {}
 
   // Retrieve all exams
   getExams(): Observable<Exam[]> {
-    return this.http.get<Exam[]>(this.apiUrl);
+    return this.http.get<Exam[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
   // Retrieve a single exam by ID
