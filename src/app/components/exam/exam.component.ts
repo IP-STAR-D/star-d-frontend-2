@@ -53,10 +53,10 @@ export class ExamComponent {
   }
 
   accept(): any {
-    this.router.navigate([`user/student/exams`]);
+    this.router.navigate([`student/exams`]);
   }
 
   decline(): any {
-    this.router.navigate([`user/student/exams`]);
+    this.router.navigate([`student/exams`]);
   }
 }

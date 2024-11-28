@@ -33,11 +33,11 @@ export class LoginComponent {
         this.authService.saveToken(response.token);
 
         if (this.email.endsWith('student.usv.ro')) {
-          this.router.navigate(['/user/student/exams']);
+          this.router.navigate(['/student/exams']);
         } else if (this.email.endsWith('usm.com')) {
-          this.router.navigate(['/user/professor/appointments']);
+          this.router.navigate(['/professor/appointments']);
         } else if (this.email.endsWith('usv.ro')) {
-          this.router.navigate(['/user/professor/appointments']);
+          this.router.navigate(['/professor/appointments']);
         } else {
           this.errorMessage = 'User necunoscut';
         }

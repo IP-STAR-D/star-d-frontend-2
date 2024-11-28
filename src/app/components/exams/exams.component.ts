@@ -54,7 +54,7 @@ export class ExamsComponent implements OnInit {
   }
 
   redirectToExam(examId: number): void {
-    this.router.navigate([`user/student/exams/${examId}`]);
+    this.router.navigate([`student/exams/${examId}`]);
   }
 
   getProfessor(professorId: number): User | null {
