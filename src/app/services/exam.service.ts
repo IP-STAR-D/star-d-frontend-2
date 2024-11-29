@@ -32,18 +32,18 @@ export class ExamService {
   // Retrieve a single exam by ID
   getExamById(id: number): Observable<Exam> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Exam>(url);
+    return this.http.get<Exam>(url, { headers: this.getAuthHeaders() });
   }
 
   // Retrieve exams by professor ID
   getExamsByProfessorId(professorId: number): Observable<Exam[]> {
     const url = `${this.apiUrl}/professor/${professorId}`;
-    return this.http.get<Exam[]>(url);
+    return this.http.get<Exam[]>(url, { headers: this.getAuthHeaders() });
   }
 
   // Retrieve exams by degree ID
   getExamsByDegreeId(degreeId: number): Observable<Exam[]> {
     const url = `${this.apiUrl}/degree/${degreeId}`;
-    return this.http.get<Exam[]>(url);
+    return this.http.get<Exam[]>(url, { headers: this.getAuthHeaders() });
   }
 }
