@@ -4,7 +4,7 @@ export class Exam {
   class_name: string;
   degreeId: number;
   semester: number;
-  user: { firstName: string; lastName: string };
+  user: { email: string; firstName: string; lastName: string };
   year: number;
 
   constructor(
@@ -13,7 +13,7 @@ export class Exam {
     class_name: string,
     degreeId: number,
     semester: number,
-    user: { firstName: string; lastName: string },
+    user: { email: string; firstName: string; lastName: string },
     year: number
   ) {
     this.examId = examId;
