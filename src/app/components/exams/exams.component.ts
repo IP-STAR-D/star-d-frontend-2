@@ -16,8 +16,6 @@ import { ExamService } from '../../services/exam.service';
 export class ExamsComponent implements OnInit {
   exams: Exam[] = [];
 
-  errorMessage: string = '';
-
   constructor(private router: Router, private examService: ExamService) {}
 
   ngOnInit(): void {
@@ -28,11 +26,9 @@ export class ExamsComponent implements OnInit {
     this.examService.getExams().subscribe({
       next: (data: Exam[]) => {
         this.exams = data;
-        console.log('Exams:', this.exams);
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);
-        this.errorMessage = 'Nu s-au putut încărca examenele.';
       },
     });
   }

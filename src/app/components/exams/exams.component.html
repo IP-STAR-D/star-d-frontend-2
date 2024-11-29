@@ -1,6 +1,4 @@
 <main class="p-8">
-  <div *ngIf="errorMessage" class="text-red-500 font-bold">{{ errorMessage }}</div>
-
   <mat-grid-list cols="3" rowHeight="200px" gutterSize="64px" *ngIf="exams.length > 0">
     <mat-grid-tile *ngFor="let exam of exams" [colspan]="1" [rowspan]="1">
       <mat-card
@@ -17,7 +15,5 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div *ngIf="exams.length === 0 && !errorMessage" class="text-center text-gray-500">
-    Nu există examene disponibile.
-  </div>
+  <div *ngIf="exams.length === 0" class="text-center text-gray-500">Nu exista examene disponibile.</div>
 </main>
