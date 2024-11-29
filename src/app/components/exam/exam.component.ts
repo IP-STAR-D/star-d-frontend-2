@@ -24,10 +24,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { Appointment } from '../../models/appointment.model';
 import { Exam } from '../../models/exam.model';
 import { Classroom } from '../../models/classroom.model';
+import { Student } from '../../models/student.model';
 
 import { AppointmentsService } from '../../services/appointment.service';
 import { ExamService } from '../../services/exam.service';
 import { ClassroomService } from '../../services/classroom.service';
+import { StudentService } from '../../services/student.service';
 
 @Component({
   selector: 'app-exam',
@@ -72,6 +74,7 @@ export class ExamComponent {
     private examService: ExamService,
     private appointmentService: AppointmentsService,
     private classroomService: ClassroomService,
+    private studentService: StudentService,
     private datePipe: DatePipe
   ) {}
 
@@ -123,7 +126,7 @@ export class ExamComponent {
           this.appointments = data.filter((appointment) => appointment.status === 'scheduled');
         },
         error: (err) => {
-          console.error('Error loading appointments:', err);
+          console.error('Eroare la preluarea programarilor:', err);
         },
       });
   }
@@ -206,6 +209,7 @@ export class ExamComponent {
   }
 
   submit(): void {
+    // Ensure all form controls are valid
     if (
       this.dateFormControl.invalid ||
       this.timeStartFormControl.invalid ||
@@ -215,6 +219,38 @@ export class ExamComponent {
       return;
     }
 
-    this.router.navigate(['student/exams']);
+    // Construct the new appointment data
+    const formattedDate = this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd')!;
+    const startTime = new Date(`${formattedDate}T${this.selectedTimeStart}:00`);
+    const endTime = new Date(`${formattedDate}T${this.selectedTimeEnd}:00`);
+
+    this.studentService.getStudentById(this.id!).subscribe({
+      next: (data: Student) => {
+        const groupId = data.groupId;
+
+        const newAppointment = new Appointment(
+          0, // Backend will generate the appointmentId
+          this.id!,
+          groupId,
+          'pending',
+          startTime,
+          endTime,
+          this.classroomId!
+        );
+
+        this.appointmentService.createAppointment(newAppointment).subscribe({
+          next: (data: Appointment) => {
+            console.log('Programare creata cu succes:', data);
+            this.router.navigate(['student/exams']);
+          },
+          error: (err) => {
+            console.error('Eroare la crearea programarii:', err);
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea studentului:', err);
+      },
+    });
   }
 }
