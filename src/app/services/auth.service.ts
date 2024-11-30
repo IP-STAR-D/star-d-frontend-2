@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -9,22 +10,29 @@ import { environment } from '../environments/environment';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {}
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('auth_token', token);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('auth_token', token);
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('auth_token');
+    }
+    return null;
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('auth_token');
+    }
   }
 
   isAuthenticated(): boolean {

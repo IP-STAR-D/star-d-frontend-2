@@ -1,18 +1,3 @@
-html, body {
-    height: 100%; 
-    margin: 0;   
-    padding: 0;
-  }
-footer {
-    background-color: rgb(25, 32, 65, 1); 
-    height: 60px; 
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    color: white;
-    font-size: 14px; 
-    font-family: Arial, sans-serif; 
-    position: relative;
-  }
-  
- 
+p {
+  margin: 0 !important;
+}

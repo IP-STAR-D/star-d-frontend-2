@@ -1,30 +1,147 @@
-<main class="p-8 flex items-center justify-center bg-gray-100">
-  <mat-card
-    class="grow max-w-md w-full justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+<div class="p-8 flex flex-row items-start justify-center gap-4">
+  <!-- Back Button -->
+  <button
+    mat-button
+    class="!bg-transparent !text-gray-600 hover:!text-gray-800 focus:!ring-2 focus:!ring-gray-600 flex items-center !mb-4"
+    (click)="goBack()"
   >
-    <mat-card-header
-      class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white text-center"
-    >
-      {{ exam?.class_name }}
+    <mat-icon class="mr-2">arrow_back</mat-icon>
+    Back
+  </button>
+
+  <mat-card class="max-w-lg w-full">
+    <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
+      <h3 mat-card-title>{{ exam?.class_name }}</h3>
+
+      <p mat-card-title class="mat-title-medium">{{ exam?.user?.firstName }} {{ exam?.user?.lastName }}</p>
     </mat-card-header>
-    <mat-card-content class="text-center">
-      {{ getProfessor(exam?.professorId)?.firstName }}
-      {{ getProfessor(exam?.professorId)?.lastName }}
-    </mat-card-content>
+
     <mat-card-content>
-      <mat-form-field class="w-full">
-        <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepicker]="picker" />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <form #examForm="ngForm" (ngSubmit)="submit()">
+        <!-- Date Picker -->
+        <mat-form-field class="w-full mt-4">
+          <mat-label>Data</mat-label>
+          <input
+            matInput
+            name="selected_date"
+            [matDatepicker]="picker"
+            [formControl]="dateFormControl"
+            [(ngModel)]="selectedDate"
+            (dateChange)="loadAppointments()"
+            required
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-error *ngIf="dateFormControl.hasError('required')"> Data este <strong>obligatorie</strong>. </mat-error>
+          <mat-error *ngIf="dateFormControl.hasError('invalidDate')"> Nu poti alege o data din trecut. </mat-error>
+        </mat-form-field>
         <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+
+        <!-- Time Picker Start -->
+        <mat-form-field class="w-full mt-4">
+          <mat-label>Ora incepere</mat-label>
+          <input
+            matInput
+            name="selected_time_start"
+            [ngxMatTimepicker]="timePickerStart"
+            [formControl]="timeStartFormControl"
+            (ngModelChange)="onTimeStartChange($event)"
+            [(ngModel)]="selectedTimeStart"
+            [format]="24"
+            [min]="minTime"
+            [max]="maxTime"
+            required
+          />
+          <ngx-mat-timepicker-toggle matIconSuffix [for]="timePickerStart"></ngx-mat-timepicker-toggle>
+          <mat-error *ngIf="timeStartFormControl.hasError('required')">
+            Ora de incepere este <strong>obligatorie</strong>.
+          </mat-error>
+          <mat-error *ngIf="timeStartFormControl.hasError('invalidTime')">
+            Ora de incepere trebuie sa fie inainte ora de incheiere.
+          </mat-error>
+          <mat-error *ngIf="timeStartFormControl.hasError('timeOverlap')">
+            Intervalul selectat se suprapune cu o programare existenta.
+          </mat-error>
+        </mat-form-field>
+        <ngx-mat-timepicker #timePickerStart [hoursOnly]="true" enableKeyboardInput></ngx-mat-timepicker>
+
+        <!-- Time Picker End -->
+        <mat-form-field class="w-full mt-4">
+          <mat-label>Ora incheiere</mat-label>
+          <input
+            matInput
+            name="selected_time_end"
+            [(ngModel)]="selectedTimeEnd"
+            [formControl]="timeEndFormControl"
+            (ngModelChange)="onTimeEndChange($event)"
+            [ngxMatTimepicker]="timePickerEnd"
+            [format]="24"
+            [min]="minTime"
+            [max]="maxTime"
+            readonly
+            required
+          />
+          <ngx-mat-timepicker-toggle matIconSuffix [for]="timePickerEnd"></ngx-mat-timepicker-toggle>
+          <mat-error *ngIf="timeEndFormControl.hasError('required')">
+            Ora de incheiere este <strong>obligatorie</strong>.
+          </mat-error>
+          <mat-error *ngIf="timeEndFormControl.hasError('invalidTime')">
+            Ora de incheiere trebuie sa fie dupa ora de incepere.
+          </mat-error>
+          <mat-error *ngIf="timeEndFormControl.hasError('timeOverlap')">
+            Intervalul selectat se suprapune cu o programare existenta.
+          </mat-error>
+        </mat-form-field>
+        <ngx-mat-timepicker #timePickerEnd [hoursOnly]="true" enableKeyboardInput></ngx-mat-timepicker>
+
+        <!-- Classroom Dropdown -->
+        <mat-form-field class="w-full mt-4">
+          <mat-label>Sala</mat-label>
+          <mat-select
+            name="selected_classroom"
+            [(ngModel)]="classroomId"
+            [formControl]="classroomFormControl"
+            (selectionChange)="loadAppointments()"
+            required
+          >
+            <mat-option *ngFor="let classroom of classrooms" [value]="classroom.classroomId">
+              {{ classroom.classroomName }} (Locuri: {{ classroom.capacity }})
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="classroomFormControl.hasError('required')">
+            Alegerea unei sali este <strong>obligatorie</strong>.
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          class="!bg-primary-dark !text-white hover:!bg-primary-darker focus:!ring-2 focus:!ring-primary-dark !mt-4"
+          type="submit"
+        >
+          Submit
+        </button>
+      </form>
     </mat-card-content>
-    <mat-card-actions>
-      <section class="example-button-row flex justify-center space-x-4">
-        <button mat-raised-button color="primary" (click)="accept()">Accept</button>
-        <button mat-raised-button color="warn" (click)="decline()">Delete</button>
-      </section>
-    </mat-card-actions>
   </mat-card>
-</main>
+
+  <mat-card class="max-w-xs w-full">
+    <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
+      <h3 mat-card-title>Intervale ocupate</h3>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Appointments List -->
+      <div *ngIf="appointments.length > 0; else noAppointments" class="pt-4">
+        <ul class="divide-y divide-gray-200">
+          <li *ngFor="let appointment of appointments" class="py-2 font-medium text-gray-800">
+            {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- No Appointments Message -->
+      <ng-template #noAppointments>
+        <div class="text-gray-500 text-center pt-4">Nu exista intervale ocupate.</div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>
