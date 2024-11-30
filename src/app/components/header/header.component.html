@@ -8,6 +8,12 @@
   </div>
 
   <div class="flex-1 flex justify-end">
-    <button class="text-white hover:text-gray-400 font-semibold py-2 px-4 rounded">Logout</button>
+    <button
+      class="text-white hover:text-gray-400 font-semibold py-2 px-4 rounded"
+      *ngIf="LogoutButton"
+      (click)="logout()"
+    >
+      Logout
+    </button>
   </div>
 </header>
