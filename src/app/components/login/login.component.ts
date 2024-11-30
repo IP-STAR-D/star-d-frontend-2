@@ -7,11 +7,14 @@ import { UserService } from '../../services/user.service';
 import { HttpClientModule } from '@angular/common/http';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, HttpClientModule],
+  imports: [FormsModule, CommonModule, HttpClientModule, MatInputModule, MatFormFieldModule, MatButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -25,10 +28,10 @@ export class LoginComponent {
 
   onLogin(): void {
     console.log('Email trimis:', this.email);
-    console.log('Parola trimisă:', this.password);
+    console.log('Parola trimisa:', this.password);
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Răspuns server:', response);
+        console.log('Raspuns server:', response);
 
         this.authService.saveToken(response.token);
 
@@ -44,7 +47,7 @@ export class LoginComponent {
       },
       error: (err) => {
         console.error('Eroare login:', err);
-        this.errorMessage = 'Email sau parolă invalidă!';
+        this.errorMessage = 'Email sau parola invalida!';
       },
     });
   }
