@@ -1,4 +1,14 @@
 <div class="p-8 flex flex-row items-start justify-center gap-4">
+  <!-- Back Button -->
+  <button
+    mat-button
+    class="!bg-transparent !text-gray-600 hover:!text-gray-800 focus:!ring-2 focus:!ring-gray-600 flex items-center !mb-4"
+    (click)="goBack()"
+  >
+    <mat-icon class="mr-2">arrow_back</mat-icon>
+    Back
+  </button>
+
   <mat-card class="max-w-lg w-full">
     <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
       <h3 mat-card-title>{{ exam?.class_name }}</h3>

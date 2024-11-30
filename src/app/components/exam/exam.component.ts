@@ -208,6 +208,10 @@ export class ExamComponent {
     this.timeEndFormControl.updateValueAndValidity();
   }
 
+  goBack(): void {
+    this.router.navigate(['student/exams']);
+  }
+
   submit(): void {
     // Ensure all form controls are valid
     if (
