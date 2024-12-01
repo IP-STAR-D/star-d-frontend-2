@@ -20,6 +20,7 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { Appointment } from '../../models/appointment.model';
 import { Exam } from '../../models/exam.model';
@@ -30,6 +31,9 @@ import { AppointmentsService } from '../../services/appointment.service';
 import { ExamService } from '../../services/exam.service';
 import { ClassroomService } from '../../services/classroom.service';
 import { StudentService } from '../../services/student.service';
+import { StatusTranslationService } from '../../services/status.service';
+
+import { PopupDialogComponent } from '../popup-dialog/popup-dialog.component';
 
 @Component({
   selector: 'app-exam',
@@ -49,6 +53,7 @@ import { StudentService } from '../../services/student.service';
     MatButtonModule,
     MatIconModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   host: { '[style.--sys-inverse-surface]': 'red' },
   templateUrl: './exam.component.html',
@@ -58,6 +63,7 @@ export class ExamComponent {
   id: number | null = null;
   exam: Exam | null = null;
   appointments: Appointment[] = [];
+  myAppointments: Appointment[] = [];
   classrooms: Classroom[] = [];
 
   selectedDate: string | null = null;
@@ -75,13 +81,16 @@ export class ExamComponent {
     private appointmentService: AppointmentsService,
     private classroomService: ClassroomService,
     private studentService: StudentService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dialog: MatDialog,
+    private statusTranslationService: StatusTranslationService
   ) {}
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadExam();
     this.loadClassrooms();
+    this.loadMyAppointments();
   }
 
   loadExam(): void {
@@ -129,6 +138,17 @@ export class ExamComponent {
           console.error('Eroare la preluarea programarilor:', err);
         },
       });
+  }
+
+  loadMyAppointments(): void {
+    this.appointmentService.getAppointments().subscribe({
+      next: (data: Appointment[]) => {
+        this.myAppointments = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea programarilor:', err);
+      },
+    });
   }
 
   // Validators
@@ -208,11 +228,38 @@ export class ExamComponent {
     this.timeEndFormControl.updateValueAndValidity();
   }
 
+  getAppointmentsForExam(): Appointment[] {
+    return this.myAppointments.filter((appointment) => appointment.examId === this.id);
+  }
+
+  getStatusTranslation(status: string): string {
+    return this.statusTranslationService.getStatusTranslation(status);
+  }
+
+  showPopup(message: string): void {
+    this.dialog.open(PopupDialogComponent, {
+      data: { message },
+    });
+  }
+
   goBack(): void {
     this.router.navigate(['student/exams']);
   }
 
   submit(): void {
+    const appointments = this.getAppointmentsForExam();
+    const scheduledAppointments = appointments.filter((appointment) => appointment.status === 'scheduled');
+    const pendingAppointments = appointments.filter((appointment) => appointment.status === 'pending');
+
+    if (scheduledAppointments && scheduledAppointments.length > 0) {
+      this.showPopup('Aveti deja o programare confirmata pentru acest examen.');
+      return;
+    }
+    if (pendingAppointments && pendingAppointments.length > 0) {
+      this.showPopup('Aveti deja o programare in asteptare pentru acest examen.');
+      return;
+    }
+
     // Ensure all form controls are valid
     if (
       this.dateFormControl.invalid ||

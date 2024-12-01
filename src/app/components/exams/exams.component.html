@@ -1,19 +1,49 @@
 <main class="p-8">
-  <mat-grid-list cols="3" rowHeight="200px" gutterSize="64px" *ngIf="exams.length > 0">
-    <mat-grid-tile *ngFor="let exam of exams" [colspan]="1" [rowspan]="1">
-      <mat-card
-        class="grow h-48 justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
-        (click)="redirectToExam(exam.examId)"
-      >
+  <div
+    *ngIf="exams.length > 0; else noExams"
+    class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center"
+  >
+    <div *ngFor="let exam of exams" class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out">
+      <mat-card class="w-full" (click)="redirectToExam(exam.examId)">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
-          <h3 mat-card-title>{{ exam.class_name }}</h3>
+          <h4 class="truncate w-full">{{ exam.class_name }}</h4>
         </mat-card-header>
         <mat-card-content>
+          <div class="h-24 p-4 mb-4">
+            <div *ngIf="getAppointmentsForExam(exam.examId) as appointment; else noAppointments">
+              <div class="mb-2">
+                <span
+                  class="font-semibold text-lg mr-2"
+                  [ngClass]="{
+                    'text-green-600': appointment.status.toLowerCase() === 'scheduled',
+                    'text-yellow-600': appointment.status.toLowerCase() === 'pending',
+                    'text-red-600': appointment.status.toLowerCase() === 'rejected'
+                  }"
+                >
+                  {{ getStatusTranslation(appointment.status).toUpperCase() }}
+                </span>
+                <span class="text-gray-700">
+                  {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+                </span>
+              </div>
+
+              <p class="text-gray-600 text-sm">
+                {{ appointment.startTime | date : "dd MMMM yyyy" }}
+              </p>
+            </div>
+
+            <ng-template #noAppointments>
+              <div class="text-gray-500 text-center pt-4">Nu exista programari pentru acest examen.</div>
+            </ng-template>
+          </div>
+
           <p mat-card-subtitle>{{ exam.user.firstName }} {{ exam.user.lastName }}</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+    </div>
+  </div>
 
-  <div *ngIf="exams.length === 0" class="text-center text-gray-500">Nu exista examene disponibile.</div>
+  <ng-template #noExams>
+    <div *ngIf="exams.length === 0" class="text-center text-gray-500">Nu exista examene disponibile.</div>
+  </ng-template>
 </main>
