@@ -33,7 +33,7 @@ export class LoginComponent {
       next: (response) => {
         console.log('Raspuns server:', response);
 
-        this.authService.saveToken(response.token);
+        this.authService.saveToken(response.token, response.userId, response.email);
 
         if (this.email.endsWith('student.usv.ro')) {
           this.router.navigate(['/student/exams']);

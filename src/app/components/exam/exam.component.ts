@@ -228,7 +228,9 @@ export class ExamComponent {
     const startTime = new Date(`${formattedDate}T${this.selectedTimeStart}:00`);
     const endTime = new Date(`${formattedDate}T${this.selectedTimeEnd}:00`);
 
-    this.studentService.getStudentById(this.id!).subscribe({
+    const user_id = Number(localStorage.getItem('user_id'));
+
+    this.studentService.getStudentById(user_id).subscribe({
       next: (data: Student) => {
         const groupId = data.groupId;
 
