@@ -16,9 +16,11 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
-  saveToken(token: string): void {
+  saveToken(token: string, user_id: string, email: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_id', user_id);
+      localStorage.setItem('email', email);
     }
   }
 
@@ -32,6 +34,8 @@ export class AuthService {
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('email');
     }
   }
 

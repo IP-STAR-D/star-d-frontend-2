@@ -123,25 +123,67 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="max-w-xs w-full">
-    <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
-      <h3 mat-card-title>Intervale ocupate</h3>
-    </mat-card-header>
+  <div class="flex flex-col gap-4 max-w-sm w-full">
+    <mat-card>
+      <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
+        <h3 mat-card-title>Intervale ocupate</h3>
+      </mat-card-header>
 
-    <mat-card-content>
-      <!-- Appointments List -->
-      <div *ngIf="appointments.length > 0; else noAppointments" class="pt-4">
-        <ul class="divide-y divide-gray-200">
-          <li *ngFor="let appointment of appointments" class="py-2 font-medium text-gray-800">
-            {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
-          </li>
-        </ul>
-      </div>
+      <mat-card-content>
+        <!-- Appointments List -->
+        <div *ngIf="appointments.length > 0; else noAppointments" class="pt-4">
+          <ul class="divide-y divide-gray-200">
+            <li *ngFor="let appointment of appointments" class="py-2 font-medium text-gray-800">
+              {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+            </li>
+          </ul>
+        </div>
 
-      <!-- No Appointments Message -->
-      <ng-template #noAppointments>
-        <div class="text-gray-500 text-center pt-4">Nu exista intervale ocupate.</div>
-      </ng-template>
-    </mat-card-content>
-  </mat-card>
+        <!-- No Appointments Message -->
+        <ng-template #noAppointments>
+          <div class="text-gray-500 text-center pt-4">Nu exista intervale ocupate.</div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
+        <h3 mat-card-title>Programarile mele</h3>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- My Appointments List -->
+        <div *ngIf="myAppointments.length > 0 && id !== null; else noMyAppointments" class="pt-2">
+          <ul class="divide-y divide-gray-200">
+            <li *ngFor="let appointment of getAppointmentsForExam()" class="py-4 font-medium text-gray-800">
+              <div class="mb-2">
+                <span
+                  class="font-semibold text-lg mr-2"
+                  [ngClass]="{
+                    'text-green-600': appointment.status.toLowerCase() === 'scheduled',
+                    'text-yellow-600': appointment.status.toLowerCase() === 'pending',
+                    'text-red-600': appointment.status.toLowerCase() === 'rejected'
+                  }"
+                >
+                  {{ getStatusTranslation(appointment.status).toUpperCase() }}
+                </span>
+                <span class="text-gray-700">
+                  {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+                </span>
+              </div>
+
+              <p class="text-gray-600 text-sm !m-0">
+                {{ appointment.startTime | date : "dd MMMM yyyy" }}
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <!-- No My Appointments Message -->
+        <ng-template #noMyAppointments>
+          <div class="text-gray-500 text-center pt-4">Nu exista programari.</div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
