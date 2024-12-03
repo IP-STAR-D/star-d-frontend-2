@@ -1,4 +1,24 @@
 mat-grid-tile {
-    overflow: visible !important;
-  }
-  
+  overflow: visible !important;
+}
+
+.mat-card {
+  position: relative;
+}
+
+.hover-text {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mat-card:hover .hover-text {
+  opacity: 100;
+  pointer-events: auto;
+}
+
+.tooltip {
+  position: fixed; 
+  pointer-events: none; 
+  z-index: 1000;
+  transition: opacity 0.2s ease-in-out;
+}

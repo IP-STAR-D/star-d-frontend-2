@@ -32,7 +32,7 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Raspuns server:', response);
+        // console.log('Raspuns server:', response);
 
         this.authService.saveToken(
           response.token,
