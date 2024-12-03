@@ -1,9 +1,19 @@
+<header
+  class="bg-gradient-to-r from-primary-dark to-primary-darker text-white flex items-center justify-between h-24 px-4 py-2 relative"
+>
+  <div class="flex-1 flex justify-start"></div>
 
-  <header class="navbar">
-    <div class="navbar-right">
-      <button class="logout-btn" *ngIf="LogoutButton" (click)="logout()">Logout</button>
-    </div>
-    <div class="navbar-center">
-      <img src="https://usv.ro/wp-content/uploads/2020/05/Sigla-USV-standard-centrat.png" class="navbar-logo">
-    </div>
-  </header>
+  <div class="absolute inset-x-0 top-0 flex justify-center pointer-events-none shadow-md">
+    <img src="https://usv.ro/wp-content/uploads/2020/05/Sigla-USV-scroll.png" alt="USV Logo" class="h-32 -mb-8" />
+  </div>
+
+  <div class="flex-1 flex justify-end">
+    <button
+      class="text-white hover:text-gray-400 font-semibold py-2 px-4 rounded"
+      *ngIf="LogoutButton"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+  </div>
+</header>

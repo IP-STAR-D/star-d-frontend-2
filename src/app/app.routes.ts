@@ -7,10 +7,9 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
-  {path:'',component:LoginComponent},
-  { path: 'user/student/exams', component: ExamsComponent,canActivate:[AuthGuard] },
-  { path: 'user/student/exams/:id', component: ExamComponent,canActivate:[AuthGuard]  },
-  { path: 'user/professor/appointments', component: AppointmentsComponent,canActivate:[AuthGuard]  },
+  { path: 'student/exams', component: ExamsComponent, canActivate: [AuthGuard] },
+  { path: 'student/exams/:id', component: ExamComponent, canActivate: [AuthGuard] },
+  { path: 'professor/appointments', component: AppointmentsComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },

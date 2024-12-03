@@ -1,62 +1,309 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Exam } from '../../models/exam.model';
-import { examsData } from '../../data/exam.data';
-import { CommonModule } from '@angular/common';
+import {
+  FormControl,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  AbstractControl,
+} from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
+
+import { provideNativeDateAdapter, MatOptionModule } from '@angular/material/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
-import { User } from '../../models/user.model';
-import { usersData } from '../../data/user.data';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { Appointment } from '../../models/appointment.model';
+import { Exam } from '../../models/exam.model';
+import { Classroom } from '../../models/classroom.model';
+import { Student } from '../../models/student.model';
+
+import { AppointmentsService } from '../../services/appointment.service';
+import { ExamService } from '../../services/exam.service';
+import { ClassroomService } from '../../services/classroom.service';
+import { StudentService } from '../../services/student.service';
+import { StatusTranslationService } from '../../services/status.service';
+
+import { PopupDialogComponent } from '../popup-dialog/popup-dialog.component';
 
 @Component({
   selector: 'app-exam',
   standalone: true,
-  providers: [provideNativeDateAdapter()],
+  providers: [provideNativeDateAdapter(), DatePipe],
   imports: [
     CommonModule,
+    FormsModule,
     MatGridListModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
+    MatOptionModule,
+    MatSelectModule,
     NgxMatTimepickerModule,
     MatButtonModule,
     MatIconModule,
+    ReactiveFormsModule,
+    MatDialogModule,
   ],
+  host: { '[style.--sys-inverse-surface]': 'red' },
   templateUrl: './exam.component.html',
   styleUrl: './exam.component.css',
 })
 export class ExamComponent {
-  id: string | null = null;
-  exams: Exam[] = examsData;
-  users: User[] = usersData;
-  exam: Exam | undefined;
+  id: number | null = null;
+  exam: Exam | null = null;
+  appointments: Appointment[] = [];
+  myAppointments: Appointment[] = [];
+  classrooms: Classroom[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  selectedDate: string | null = null;
+  selectedTimeStart: string | null = null;
+  selectedTimeEnd: string | null = null;
+  classroomId: number | null = null;
+
+  minTime: string = '08:00';
+  maxTime: string = '22:00';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private examService: ExamService,
+    private appointmentService: AppointmentsService,
+    private classroomService: ClassroomService,
+    private studentService: StudentService,
+    private datePipe: DatePipe,
+    private dialog: MatDialog,
+    private statusTranslationService: StatusTranslationService
+  ) {}
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
-
-    this.exam = this.exams.find((x) => x.examId == Number(this.id));
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadExam();
+    this.loadClassrooms();
+    this.loadMyAppointments();
   }
 
-  getProfessor(professorId: number | undefined): User | null {
-    const professor = this.users.find((p) => p.userId === professorId);
-    return professor ? professor : null;
+  loadExam(): void {
+    if (!this.id) return;
+
+    this.examService.getExamById(this.id).subscribe({
+      next: (data: Exam) => {
+        this.exam = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea examenului:', err);
+      },
+    });
   }
 
-  accept(): any {
-    this.router.navigate([`user/student/exams`]);
+  loadClassrooms(): void {
+    this.classroomService.getClassrooms().subscribe({
+      next: (data: Classroom[]) => {
+        this.classrooms = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea salilor:', err);
+      },
+    });
   }
 
-  decline(): any {
-    this.router.navigate([`user/student/exams`]);
+  loadAppointments(): void {
+    if (!this.selectedDate || !this.exam || !this.classroomId) {
+      return;
+    }
+
+    const formattedDate = this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd')?.toString();
+
+    this.appointmentService
+      .getAppointmentsByFilters({
+        professorId: this.exam.professorId,
+        classroomId: this.classroomId,
+        day: formattedDate,
+      })
+      .subscribe({
+        next: (data: Appointment[]) => {
+          this.appointments = data.filter((appointment) => appointment.status === 'scheduled');
+        },
+        error: (err) => {
+          console.error('Eroare la preluarea programarilor:', err);
+        },
+      });
+  }
+
+  loadMyAppointments(): void {
+    this.appointmentService.getAppointments().subscribe({
+      next: (data: Appointment[]) => {
+        this.myAppointments = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea programarilor:', err);
+      },
+    });
+  }
+
+  // Validators
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    const inputValue = control.value;
+    if (inputValue && new Date(inputValue) <= new Date()) {
+      return { invalidDate: true };
+    }
+    return null;
+  }
+  timeStartValidator(control: AbstractControl): ValidationErrors | null {
+    const inputValue = control.value;
+    if (inputValue && this.selectedTimeEnd && inputValue >= this.selectedTimeEnd) {
+      return { invalidTime: true };
+    }
+    return null;
+  }
+  timeEndValidator(control: AbstractControl): ValidationErrors | null {
+    const inputValue = control.value;
+    if (inputValue && this.selectedTimeStart && inputValue <= this.selectedTimeStart) {
+      return { invalidTime: true };
+    }
+    return null;
+  }
+  timeOverlapValidator(control: AbstractControl): ValidationErrors | null {
+    if (!this.selectedDate || !this.selectedTimeStart || !this.selectedTimeEnd || !this.appointments) {
+      return null;
+    }
+
+    const selectedStart = new Date(this.selectedDate);
+    const [startHour, startMinute] = this.selectedTimeStart.split(':').map(Number);
+    selectedStart.setHours(startHour, startMinute, 0, 0);
+
+    const selectedEnd = new Date(this.selectedDate);
+    const [endHour, endMinute] = this.selectedTimeEnd.split(':').map(Number);
+    selectedEnd.setHours(endHour, endMinute, 0, 0);
+
+    for (const appointment of this.appointments) {
+      const appointmentStart = new Date(appointment.startTime);
+      const appointmentEnd = new Date(appointment.endTime);
+
+      if (
+        (selectedStart >= appointmentStart && selectedStart < appointmentEnd) ||
+        (selectedEnd > appointmentStart && selectedEnd <= appointmentEnd) ||
+        (selectedStart <= appointmentStart && selectedEnd >= appointmentEnd)
+      ) {
+        return { timeOverlap: true };
+      }
+    }
+
+    return null;
+  }
+
+  // Form Controls
+  dateFormControl = new FormControl('', [Validators.required, this.futureDateValidator]);
+  timeStartFormControl = new FormControl('', [
+    Validators.required,
+    this.timeStartValidator.bind(this),
+    this.timeOverlapValidator.bind(this),
+  ]);
+  timeEndFormControl = new FormControl('', [
+    Validators.required,
+    this.timeEndValidator.bind(this),
+    this.timeOverlapValidator.bind(this),
+  ]);
+  classroomFormControl = new FormControl('', [Validators.required]);
+
+  onTimeStartChange(newValue: string) {
+    this.selectedTimeStart = newValue;
+    this.timeEndFormControl.updateValueAndValidity();
+    this.timeStartFormControl.updateValueAndValidity();
+  }
+
+  onTimeEndChange(newValue: string) {
+    this.selectedTimeEnd = newValue;
+    this.timeStartFormControl.updateValueAndValidity();
+    this.timeEndFormControl.updateValueAndValidity();
+  }
+
+  getAppointmentsForExam(): Appointment[] {
+    return this.myAppointments.filter((appointment) => appointment.examId === this.id);
+  }
+
+  getStatusTranslation(status: string): string {
+    return this.statusTranslationService.getStatusTranslation(status);
+  }
+
+  showPopup(message: string): void {
+    this.dialog.open(PopupDialogComponent, {
+      data: { message },
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['student/exams']);
+  }
+
+  submit(): void {
+    const appointments = this.getAppointmentsForExam();
+    const scheduledAppointments = appointments.filter((appointment) => appointment.status === 'scheduled');
+    const pendingAppointments = appointments.filter((appointment) => appointment.status === 'pending');
+
+    if (scheduledAppointments && scheduledAppointments.length > 0) {
+      this.showPopup('Aveti deja o programare confirmata pentru acest examen.');
+      return;
+    }
+    if (pendingAppointments && pendingAppointments.length > 0) {
+      this.showPopup('Aveti deja o programare in asteptare pentru acest examen.');
+      return;
+    }
+
+    // Ensure all form controls are valid
+    if (
+      this.dateFormControl.invalid ||
+      this.timeStartFormControl.invalid ||
+      this.timeEndFormControl.invalid ||
+      this.classroomFormControl.invalid
+    ) {
+      return;
+    }
+
+    // Construct the new appointment data
+    const formattedDate = this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd')!;
+    const startTime = new Date(`${formattedDate}T${this.selectedTimeStart}:00`);
+    const endTime = new Date(`${formattedDate}T${this.selectedTimeEnd}:00`);
+
+    const user_id = Number(localStorage.getItem('user_id'));
+
+    this.studentService.getStudentById(user_id).subscribe({
+      next: (data: Student) => {
+        const groupId = data.groupId;
+
+        const newAppointment = new Appointment(
+          0, // Backend will generate the appointmentId
+          this.id!,
+          groupId,
+          'pending',
+          startTime,
+          endTime,
+          this.classroomId!
+        );
+
+        this.appointmentService.createAppointment(newAppointment).subscribe({
+          next: (data: Appointment) => {
+            console.log('Programare creata cu succes:', data);
+            this.router.navigate(['student/exams']);
+          },
+          error: (err) => {
+            console.error('Eroare la crearea programarii:', err);
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea studentului:', err);
+      },
+    });
   }
 }
