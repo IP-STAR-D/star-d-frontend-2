@@ -25,21 +25,24 @@ export class LoginComponent {
 
   onLogin(): void {
     console.log('Email trimis:', this.email);
-    console.log('Parola trimisă:', this.password);
+    console.log('Parola trimisa:', this.password);
+
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Răspuns server:', response);
+        console.log('Raspuns server:', response);
 
-        this.authService.saveToken(response.token);
+        this.authService.saveToken(
+          response.token,
+          response.userId,
+          response.email
+        );
 
-        if (this.email.endsWith('student.usv.ro')) {
-          this.router.navigate(['/user/student/exams']);
-        } else if (this.email.endsWith('usm.com')) {
-          this.router.navigate(['/user/professor/appointments']);
-        } else if (this.email.endsWith('usv.ro')) {
-          this.router.navigate(['/user/professor/appointments']);
+        if (response.role === 'professor') {
+          this.router.navigate(['/professor/appointments']);
+        } else if (response.role === 'student') {
+          this.router.navigate(['/student/exams']);
         } else {
-          this.errorMessage = 'User necunoscut';
+          this.errorMessage = 'Rol necunoscut';
         }
       },
       error: (err) => {

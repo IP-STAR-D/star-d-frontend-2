@@ -1,3 +1,6 @@
+import { Exam } from "./exam.model";
+
+
 export class Appointment {
   appointmentId: number;
   examId: number;
@@ -6,6 +9,8 @@ export class Appointment {
   startTime: Date;
   endTime: Date;
   classroomId: number;
+ 
+
 
   constructor(
     appointmentId: number,
@@ -14,7 +19,9 @@ export class Appointment {
     status: string = 'pending',
     startTime: Date,
     endTime: Date,
-    classroomId: number
+    classroomId: number,
+    
+   
   ) {
     this.appointmentId = appointmentId;
     this.examId = examId;
@@ -23,5 +30,7 @@ export class Appointment {
     this.startTime = startTime;
     this.endTime = endTime;
     this.classroomId = classroomId;
+    
+ 
   }
 }
