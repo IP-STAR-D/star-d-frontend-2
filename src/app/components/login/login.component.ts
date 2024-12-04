@@ -14,14 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    FormsModule,
-    CommonModule,
-    HttpClientModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatButtonModule,
-  ],
+  imports: [FormsModule, CommonModule, HttpClientModule, MatInputModule, MatFormFieldModule, MatButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -39,13 +32,7 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        // console.log('Raspuns server:', response);
-
-        this.authService.saveToken(
-          response.token,
-          response.userId,
-          response.email
-        );
+        this.authService.saveToken(response.token, response.userId, response.email, response.role);
 
         if (response.role === 'professor') {
           this.router.navigate(['/professor/appointments']);
@@ -65,6 +52,18 @@ export class LoginComponent {
   onLogout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  onContinue(): void {
+    const role = this.authService.getRole();
+
+    if (role === 'professor') {
+      this.router.navigate(['/professor/appointments']);
+    } else if (role === 'student') {
+      this.router.navigate(['/student/exams']);
+    } else {
+      this.errorMessage = 'Rol necunoscut';
+    }
   }
 
   isAuthenticated() {

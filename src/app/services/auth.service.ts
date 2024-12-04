@@ -16,11 +16,12 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
-  saveToken(token: string, user_id: string, email: string): void {
+  saveToken(token: string, user_id: string, email: string, role: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('auth_token', token);
       localStorage.setItem('user_id', user_id);
       localStorage.setItem('email', email);
+      localStorage.setItem('role', role);
     }
   }
 
@@ -31,17 +32,37 @@ export class AuthService {
     return null;
   }
 
+  getUserId(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('user_id');
+    }
+    return null;
+  }
+
+  getEmail(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('email');
+    }
+    return null;
+  }
+
+  getRole(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('role');
+    }
+    return null;
+  }
+
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user_id');
       localStorage.removeItem('email');
+      localStorage.removeItem('role');
     }
   }
 
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
-
- 
 }
