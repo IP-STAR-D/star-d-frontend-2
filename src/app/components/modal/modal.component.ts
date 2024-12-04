@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {Component, inject} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -8,10 +9,6 @@ import {
   MatDialogClose
 } from '@angular/material/dialog';
 
-export interface DialogData {
-  status: 'pending' | 'accepted' | 'refused';
-}
-
 @Component({
   selector: 'dialog-data-example-dialog',
   templateUrl: 'modal.component.html',
@@ -21,21 +18,25 @@ export interface DialogData {
     MatDialogTitle, 
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose],
+    MatDialogClose,
+    CommonModule],
 })
 export class AppointmentModal {
   data = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<AppointmentModal>);
   appointment = this.data.appointment;
   exam = this.data.exam;
+
   onAccept(): void {
-    // Handle accept action
-    // this.dialogRef.close({ status: 'accepted' });
+    this.dialogRef.close({ status: 'scheduled' });
+  }
+
+  onPending(): void {
+    this.dialogRef.close({ status: 'pending' });
   }
 
   onReject(): void {
-    // Handle reject action
-    // this.dialogRef.close({ status: 'rejected' });
+    this.dialogRef.close({ status: 'rejected' });
   }
   
   getTime(date: Date) {

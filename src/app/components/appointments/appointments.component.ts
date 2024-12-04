@@ -6,15 +6,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Appointment } from '../../models/appointment.model';
 import { User } from '../../models/user.model';
-import { usersData } from '../../data/user.data';
 import { Exam } from '../../models/exam.model';
-import { examsData } from '../../data/exam.data';
-import { appointmentsData } from '../../data/appointment.data';
-import { FooterComponent } from '../footer/footer.component';
-import { HeaderComponent } from '../header/header.component';
 import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
+import { StatusTranslationService } from '../../services/status.service';
 
 @Component({
   selector: 'app-exams',
@@ -22,9 +18,7 @@ import { AppointmentsService } from '../../services/appointment.service';
   imports: [
     CommonModule,
     MatGridListModule,
-    MatCardModule,
-    FooterComponent,
-    HeaderComponent,
+    MatCardModule
   ],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
@@ -34,12 +28,16 @@ export class AppointmentsComponent implements OnInit {
   users: User[] = [];
   exams: Exam[] = [];
   professorId: number | null = null;
+  showTooltip = false;
+  tooltipX = 0;
+  tooltipY = 0;
 
   constructor(
     private router: Router,
     private dialog: MatDialog,
     private examService: ExamService,
-    private appointmentService: AppointmentsService
+    private appointmentService: AppointmentsService,
+    private statusTranslationService: StatusTranslationService
   ) {}
 
   ngOnInit(): void {
@@ -51,9 +49,11 @@ export class AppointmentsComponent implements OnInit {
     const dialogRef = this.dialog.open(AppointmentModal, {
       data: { appointment, exam: this.getExam(appointment.examId) },
     });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined) {
-        //Change appointment status
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Dialog result:', result);
+        this.updateStatus(appointment, result.status);
       }
     });
   }
@@ -63,16 +63,16 @@ export class AppointmentsComponent implements OnInit {
       this.professorId = Number(localStorage.getItem('user_id'));
 
     if (!this.professorId) {
-      console.log(localStorage.getItem('user_id'));
-      console.log(this.professorId);
+      // console.log(localStorage.getItem('user_id'));
+      // console.log(this.professorId);
       console.error('Profesorul nu are ID valid.');
       return;
     }
 
     this.examService.getExamsByProfessorId(this.professorId).subscribe({
       next: (data: Exam[]) => {
-        this.exams = data;
-        console.log('Examene preluate:', this.exams);
+        this.exams = data; // Salvează datele primite de la API în variabila exams
+        // console.log('Examene preluate:', this.exams);
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);
@@ -102,8 +102,37 @@ export class AppointmentsComponent implements OnInit {
         );
       },
       error: (err) => {
-        console.error('Eroare la preluarea programarilor:', err);
+        // console.error('Eroare la preluarea programarilor:', err);
       },
     });
+  }
+
+  getStatusTranslation(status: string): string {
+    return this.statusTranslationService.getStatusTranslation(status);
+  }
+
+  onMouseMove(event: MouseEvent) {
+    this.showTooltip = true;
+    this.tooltipX = event.clientX + 10; // Ajustează poziția față de cursor
+    this.tooltipY = event.clientY + 10;
+  }
+
+  hideTooltip() {
+    this.showTooltip = false;
+  }
+
+  updateStatus(appointment: Appointment, status: string) {
+    appointment.status = status;
+    
+    this.appointmentService.updateAppointment(appointment.appointmentId, appointment).subscribe(
+      (updatedAppointment) => {
+        console.log('Appointment updated successfully:', updatedAppointment);
+        // Poți face ceva cu appointment-ul actualizat
+      },
+      (error) => {
+        console.error('Error updating appointment:', error);
+        // Poți gestiona erorile aici
+      }
+    );
   }
 }

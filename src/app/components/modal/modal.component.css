@@ -1,40 +1,75 @@
 .details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    text-align: left;
-    margin-bottom: 1.5rem;
-    padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  text-align: left;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-grid div {
+  padding: 0.5rem;
+  border-left: 4px solid #f0f0f0;
+}
+
+.details-grid div strong {
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
 }
 
 mat-dialog-content {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.accept-button,
+.reject-button,
+.pending-button {
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .accept-button {
-    background-color: #4caf50;
-    color: white;
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
-    margin:1.5rem;
+  background-color: #4caf50;
 }
 
 .reject-button {
-    background-color: #f44336;
-    color: white;
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
+  background-color: #f44336;
 }
 
-.accept-button:hover,
+.pending-button {
+  background-color: #ff9800;
+}
+
+.accept-button:hover {
+  background-color: #43a047;
+}
+
 .reject-button:hover {
-    opacity: 0.9;
+  background-color: #e53935;
+}
+
+.pending-button:hover {
+  background-color: #fb8c00;
 }
 
 mat-dialog-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }

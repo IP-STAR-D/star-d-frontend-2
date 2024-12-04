@@ -1,20 +1,47 @@
 <main>
-  <mat-grid-list cols="3" rowHeight="200px" gutterSize="64px">
-    <mat-grid-tile *ngFor="let appointment of appointments" [colspan]="1" [rowspan]="1">
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+  >
+    <div
+      *ngFor="let appointment of appointments"
+      class="relative cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+    >
       <mat-card
-        class="grow h-48 justify-between cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+        class="grow h-48 justify-between"
         (click)="openDialog(appointment)"
+        (mousemove)="onMouseMove($event)"
+        (mouseleave)="hideTooltip()"
       >
-
-          <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
-            <h4 class="truncate w-full">{{getExam(appointment.examId)?.class_name }}</h4>
-          </mat-card-header>
+        <mat-card-header
+          class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white"
+        >
+          <h4 class="truncate w-full">
+            {{ getExam(appointment.examId)?.class_name }}
+          </h4>
+        </mat-card-header>
         <mat-card-content>
-          <p mat-card-subtitle>{{appointment.startTime | date : "HH:mm"}} - {{appointment.endTime | date : "HH:mm"}}</p>
+          <span>Status:</span>
+          <span
+            class="font-semibold text-lg mr-2"
+            [ngClass]="{
+              'text-green-600':
+                appointment.status.toLowerCase() === 'scheduled',
+              'text-yellow-600': appointment.status.toLowerCase() === 'pending',
+              'text-red-600': appointment.status.toLowerCase() === 'rejected'
+            }"
+          >
+            {{ getStatusTranslation(appointment.status).toUpperCase() }}
+          </span>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
-    
-
-  </mat-grid-list>
+      <div
+        class="tooltip fixed bg-gray-700 text-white py-1 px-3 rounded shadow-md text-sm"
+        *ngIf="showTooltip"
+        [style.left.px]="tooltipX"
+        [style.top.px]="tooltipY"
+      >
+        Click pentru mai multe detalii
+      </div>
+    </div>
+  </div>
 </main>
