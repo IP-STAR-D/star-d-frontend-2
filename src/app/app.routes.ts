@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { ExamsComponent } from './components/exams/exams.component';
 import { ExamComponent } from './components/exam/exam.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
-import { ClassComponent } from './components/class/class.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './auth.guard';
 
