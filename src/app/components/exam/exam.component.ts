@@ -297,6 +297,7 @@ export class ExamComponent {
             this.router.navigate(['student/exams']);
           },
           error: (err) => {
+            this.showPopup(err.error.message);
             console.error('Eroare la crearea programarii:', err);
           },
         });
