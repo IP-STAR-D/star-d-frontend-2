@@ -14,7 +14,14 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, HttpClientModule, MatInputModule, MatFormFieldModule, MatButtonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    HttpClientModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -53,5 +60,14 @@ export class LoginComponent {
         this.errorMessage = 'Email sau parola invalida!';
       },
     });
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
   }
 }

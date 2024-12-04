@@ -88,16 +88,15 @@ export class AppointmentsComponent implements OnInit {
   loadMyAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
       next: (data: any[]) => {
-        // Mapare manuală a câmpurilor
         this.appointments = data.map(
           (item) =>
             new Appointment(
               item.appointment_id,
               item.exam_id,
-              item.group_id, // se mapează group_id la groupId
+              item.group_id,
               item.status,
-              new Date(item.start_time), // se mapează start_time la startTime și îl convertești într-un obiect Date
-              new Date(item.end_time), // similar pentru end_time
+              new Date(item.start_time),
+              new Date(item.end_time),
               item.classroom_id
             )
         );
