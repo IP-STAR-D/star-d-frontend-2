@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://star-d-backend.onrender.com',
+  apiUrl: 'http://localhost:8081',
 };

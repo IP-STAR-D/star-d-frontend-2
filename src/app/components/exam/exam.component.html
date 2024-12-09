@@ -131,10 +131,16 @@
 
       <mat-card-content>
         <!-- Appointments List -->
-        <div *ngIf="appointments.length > 0; else noAppointments" class="pt-4">
+        <div *ngIf="appointments.length > 0; else noAppointments" class="pt-2">
           <ul class="divide-y divide-gray-200">
-            <li *ngFor="let appointment of appointments" class="py-2 font-medium text-gray-800">
-              {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+            <li *ngFor="let appointment of appointments" class="py-4 font-medium text-gray-800">
+              <div class="mb-2">
+                {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+              </div>
+
+              <div *ngFor="let match of getAppointmentMatches(appointment.appointmentId)">
+                <p class="text-gray-600 text-sm !m-0">{{ match }}</p>
+              </div>
             </li>
           </ul>
         </div>

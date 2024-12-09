@@ -22,7 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import { Appointment } from '../../models/appointment.model';
+import { Appointment, Matches, FilteredAppointmentsResponse } from '../../models/appointment.model';
 import { Exam } from '../../models/exam.model';
 import { Classroom } from '../../models/classroom.model';
 import { Student } from '../../models/student.model';
@@ -63,6 +63,7 @@ export class ExamComponent {
   id: number | null = null;
   exam: Exam | null = null;
   appointments: Appointment[] = [];
+  appointmentsMatches: Matches[] = [];
   myAppointments: Appointment[] = [];
   classrooms: Classroom[] = [];
 
@@ -118,7 +119,7 @@ export class ExamComponent {
   }
 
   loadAppointments(): void {
-    if (!this.selectedDate || !this.exam || !this.classroomId) {
+    if (!this.selectedDate) {
       return;
     }
 
@@ -126,16 +127,22 @@ export class ExamComponent {
 
     this.appointmentService
       .getAppointmentsByFilters({
-        professorId: this.exam.professorId,
-        classroomId: this.classroomId,
-        day: formattedDate,
+        professorId: this.exam?.professorId ?? undefined,
+        classroomId: this.classroomId ?? undefined,
+        day: formattedDate ?? undefined,
       })
       .subscribe({
-        next: (data: Appointment[]) => {
-          this.appointments = data.filter((appointment) => appointment.status === 'scheduled');
+        next: (data: FilteredAppointmentsResponse) => {
+          this.appointments = data.appointments.filter((appointment) => appointment.status === 'scheduled');
+          this.appointmentsMatches = data.matches;
         },
         error: (err) => {
-          console.error('Eroare la preluarea programarilor:', err);
+          if (err.status === 404) {
+            this.appointments = [];
+            this.appointmentsMatches = [];
+          } else {
+            console.error('Eroare la preluarea programarilor:', err);
+          }
         },
       });
   }
@@ -234,6 +241,30 @@ export class ExamComponent {
 
   getStatusTranslation(status: string): string {
     return this.statusTranslationService.getStatusTranslation(status);
+  }
+
+  getAppointmentMatches(appointmentId: number): string[] {
+    if (!this.appointmentsMatches) {
+      return [];
+    }
+
+    const matches = this.appointmentsMatches.find((match) => match.id === appointmentId);
+    if (!matches) {
+      return [];
+    }
+
+    const results = [];
+    if (matches.matches.includes('professor')) {
+      results.push('Profesorul are examen/colocviu');
+    }
+    if (matches.matches.includes('classroom')) {
+      results.push('Sala este ocupata');
+    }
+    if (matches.matches.includes('group')) {
+      results.push('Grupa are examen/colocviu');
+    }
+
+    return results;
   }
 
   showPopup(message: string): void {
