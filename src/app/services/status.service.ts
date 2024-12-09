@@ -8,6 +8,7 @@ export class StatusTranslationService {
     scheduled: 'Programat',
     pending: 'In asteptare',
     rejected: 'Respins',
+    canceled: 'Anulat',
   };
 
   constructor() {}

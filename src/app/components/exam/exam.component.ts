@@ -267,6 +267,37 @@ export class ExamComponent {
     return results;
   }
 
+  cancelAppointment(appointmentId: number): void {
+    const appointmentToCancel = this.myAppointments.find((appointment) => appointment.appointmentId === appointmentId);
+
+    if (!appointmentToCancel) {
+      console.error('Appointment not found.');
+      return;
+    }
+
+    if (confirm('Sigur doriti sa anulati aceasta programare?')) {
+      const updatedAppointment = new Appointment(
+        appointmentToCancel.appointmentId,
+        appointmentToCancel.examId,
+        appointmentToCancel.groupId,
+        'canceled',
+        appointmentToCancel.startTime,
+        appointmentToCancel.endTime,
+        appointmentToCancel.classroomId
+      );
+
+      this.appointmentService.updateAppointment(appointmentId, updatedAppointment).subscribe({
+        next: () => {
+          this.loadMyAppointments();
+          console.log('Appointment cancelled successfully.');
+        },
+        error: (err) => {
+          console.error('Error updating appointment:', err);
+        },
+      });
+    }
+  }
+
   showPopup(message: string): void {
     this.dialog.open(PopupDialogComponent, {
       data: { message },

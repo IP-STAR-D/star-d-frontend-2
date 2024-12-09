@@ -161,7 +161,7 @@
         <!-- My Appointments List -->
         <div *ngIf="myAppointments.length > 0 && id !== null; else noMyAppointments" class="pt-2">
           <ul class="divide-y divide-gray-200">
-            <li *ngFor="let appointment of getAppointmentsForExam()" class="py-4 font-medium text-gray-800">
+            <li *ngFor="let appointment of getAppointmentsForExam()" class="relative py-4 font-medium text-gray-800">
               <div class="mb-2">
                 <span
                   class="font-semibold text-lg mr-2"
@@ -181,6 +181,16 @@
               <p class="text-gray-600 text-sm !m-0">
                 {{ appointment.startTime | date : "dd MMMM yyyy" }}
               </p>
+
+              <!-- Cancel Button for Pending Appointments -->
+              <button
+                *ngIf="appointment.status.toLowerCase() === 'pending'"
+                mat-button
+                class="!text-red-600 hover:!bg-red-100 active:!bg-red-200 focus:!ring-2 focus:!ring-red-600 !absolute !bottom-0 !right-0 !mb-2"
+                (click)="cancelAppointment(appointment.appointmentId)"
+              >
+                Anuleaza
+              </button>
             </li>
           </ul>
         </div>
