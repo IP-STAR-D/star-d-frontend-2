@@ -10,6 +10,7 @@ import { Appointment } from '../../models/appointment.model';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
 import { StatusTranslationService } from '../../services/status.service';
+import { SnackBarService } from '../../services/snack-bar.service';
 
 @Component({
   selector: 'app-exams',
@@ -26,7 +27,8 @@ export class ExamsComponent implements OnInit {
     private router: Router,
     private examService: ExamService,
     private appointmentService: AppointmentsService,
-    private statusTranslationService: StatusTranslationService
+    private statusTranslationService: StatusTranslationService,
+    private snackBarService: SnackBarService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +43,7 @@ export class ExamsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);
+        this.snackBarService.show('Eroare la preluarea examenelor!');
       },
     });
   }
@@ -52,6 +55,7 @@ export class ExamsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea programarilor:', err);
+        this.snackBarService.show('Eroare la preluarea programarilor!');
       },
     });
   }

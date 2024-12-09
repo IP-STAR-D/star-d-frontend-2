@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Appointment } from '../models/appointment.model';
+import { Appointment, FilteredAppointmentsResponse } from '../models/appointment.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,7 @@ export class AppointmentsService {
     professorId?: number;
     classroomId?: number;
     day?: string;
-  }): Observable<Appointment[]> {
+  }): Observable<FilteredAppointmentsResponse> {
     const params: any = {};
 
     if (filters.professorId) {
@@ -47,7 +47,7 @@ export class AppointmentsService {
     }
 
     const url = `${this.apiUrl}/filter`;
-    return this.http.get<Appointment[]>(url, { headers: this.getAuthHeaders(), params });
+    return this.http.get<FilteredAppointmentsResponse>(url, { headers: this.getAuthHeaders(), params });
   }
 
   // Retrieve a single appointment by ID
