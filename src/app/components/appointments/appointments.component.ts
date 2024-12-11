@@ -11,6 +11,7 @@ import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
 import { StatusTranslationService } from '../../services/status.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-exams',
@@ -18,19 +19,24 @@ import { StatusTranslationService } from '../../services/status.service';
   imports: [
     CommonModule,
     MatGridListModule,
-    MatCardModule
+    MatCardModule,
+    FormsModule
   ],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
 })
 export class AppointmentsComponent implements OnInit {
   appointments: Appointment[] = [];
+  filteredAppointments: Appointment[] = [];
   users: User[] = [];
   exams: Exam[] = [];
   professorId: number | null = null;
   showTooltip = false;
   tooltipX = 0;
   tooltipY = 0;
+
+  statusFilter: string = ''; // Filtrul pentru status
+  examFilter: string = ''; // Inițializat la șir gol
 
   constructor(
     private router: Router,
@@ -85,6 +91,38 @@ export class AppointmentsComponent implements OnInit {
     return exam ? exam : null;
   }
 
+  applyFilters(): void {
+    //console.log("Applying filters:", this.statusFilter, this.examFilter);  // Debugging
+  
+    this.filteredAppointments = this.appointments.filter((appointment) => {
+      const matchesStatus =
+        this.statusFilter === '' ||
+        appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
+  
+      // Modificare: Verificăm dacă `examFilter` este gol
+      const matchesExam =
+        this.examFilter === '' || appointment.examId === Number(this.examFilter);
+  
+      //console.log("Appointment matches: ", appointment, matchesStatus, matchesExam);  // Debugging
+  
+      return matchesStatus && matchesExam;
+    });
+  
+    //console.log("Filtered appointments:", this.filteredAppointments);  // Debugging
+  }
+  
+  onStatusFilterChange(event: Event): void {
+    const status = (event.target as HTMLSelectElement).value;
+    this.statusFilter = status;
+    this.applyFilters();
+  }
+  
+  onExamFilterChange(event: Event): void {
+    const examId = (event.target as HTMLSelectElement).value;
+    this.examFilter = examId;
+    this.applyFilters();
+  }  
+
   loadMyAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
       next: (data: any[]) => {
@@ -100,9 +138,10 @@ export class AppointmentsComponent implements OnInit {
               item.classroom_id
             )
         );
+        this.filteredAppointments = [...this.appointments]; // Inițial, toate programările sunt vizibile
       },
       error: (err) => {
-        // console.error('Eroare la preluarea programarilor:', err);
+        console.error('Eroare la preluarea programarilor:', err);
       },
     });
   }

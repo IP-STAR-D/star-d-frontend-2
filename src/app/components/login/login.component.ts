@@ -38,6 +38,8 @@ export class LoginComponent {
           this.router.navigate(['/professor/appointments']);
         } else if (response.role === 'student') {
           this.router.navigate(['/student/exams']);
+        } else if (response.role === 'admin') {
+          this.router.navigate(['/admin']);
         } else {
           this.errorMessage = 'Rol necunoscut';
         }
@@ -61,6 +63,8 @@ export class LoginComponent {
       this.router.navigate(['/professor/appointments']);
     } else if (role === 'student') {
       this.router.navigate(['/student/exams']);
+    } else if (role === 'admin') {
+      this.router.navigate(['/admin']);
     } else {
       this.errorMessage = 'Rol necunoscut';
     }

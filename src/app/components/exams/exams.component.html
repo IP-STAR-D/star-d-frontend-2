@@ -1,9 +1,33 @@
 <main>
-  <div
-    *ngIf="exams.length > 0; else noExams"
-    class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center"
-  >
-    <div *ngFor="let exam of exams" class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out">
+  <!-- Filtre pentru examene -->
+  <div class="filters mb-4 flex gap-4">
+    <!-- Filtru pentru profesori -->
+    <select
+      class="border rounded p-2"
+      [(ngModel)]="professorFilter"
+      (change)="applyFilters()"
+    >
+      <option [value]="null">Toți profesorii</option>
+      <option *ngFor="let professor of professors" [value]="professor.userId">
+        {{ professor.user?.firstName }} {{ professor.user?.lastName }}
+      </option>
+    </select>
+
+    <!-- Filtru pentru statusul programărilor -->
+    <select
+      class="border rounded p-2"
+      [(ngModel)]="statusFilter"
+      (change)="applyFilters()"
+    >
+      <option value="">Toate statusurile</option>
+      <option value="scheduled">Scheduled</option>
+      <option value="pending">Pending</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+
+  <div *ngIf="filteredExams.length > 0; else noExams" class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center">
+    <div *ngFor="let exam of filteredExams" class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out">
       <mat-card class="w-full" (click)="redirectToExam(exam.examId)">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
           <h4 class="truncate w-full">{{ exam.class_name }}</h4>
@@ -33,7 +57,7 @@
             </div>
 
             <ng-template #noAppointments>
-              <div class="text-gray-500 text-center pt-4">Nu exista programari pentru acest examen.</div>
+              <div class="text-gray-500 text-center pt-4">Nu exista programări pentru acest examen.</div>
             </ng-template>
           </div>
 
@@ -44,6 +68,6 @@
   </div>
 
   <ng-template #noExams>
-    <div *ngIf="exams.length === 0" class="text-center text-gray-500">Nu exista examene disponibile.</div>
+    <div class="text-center text-gray-500">Nu există examene disponibile.</div>
   </ng-template>
 </main>

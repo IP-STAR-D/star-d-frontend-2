@@ -18,7 +18,6 @@ import {
     MatDialogTitle, 
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     CommonModule],
 })
 export class AppointmentModal {
