@@ -1,3 +1,52 @@
-<p>
-  admin works!
-</p>
+<div class="container mx-auto p-4">
+  <!-- Filtre -->
+  <div class="flex space-x-4 mb-6">
+    <!-- Filtrul pentru status -->
+    <select
+      class="px-4 py-2 border rounded-md"
+      [(ngModel)]="statusFilter"
+      (change)="onStatusFilterChange($event)"
+    >
+      <option value="">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="Completed">Completed</option>
+      <option value="Canceled">Canceled</option>
+    </select>
+
+    <!-- Filtrul pentru examene -->
+    <select
+      class="px-4 py-2 border rounded-md"
+      [(ngModel)]="examFilter"
+      (change)="onExamFilterChange($event)"
+    >
+      <option value="">All Appointmens</option>
+      <option *ngFor="let exam of exams" [value]="exam.examId">
+        {{ exam.class_name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Lista programărilor -->
+  <div>
+    <h2 class="text-lg font-bold mb-4">Appointments</h2>
+    <div *ngIf="filteredAppointments.length === 0" class="text-gray-500">
+      No appointments found.
+    </div>
+    <ul class="space-y-4">
+      <li
+        *ngFor="let appointment of filteredAppointments"
+        class="p-4 border rounded-lg shadow-sm bg-gray-50"
+      >
+        <p><strong>Appointment ID:</strong> {{ appointment.appointmentId }}</p>
+        <p><strong>Exam:</strong> {{ getExam(appointment.examId)?.class_name || 'N/A' }}</p>
+        <p><strong>Status:</strong> {{ getStatusTranslation(appointment.status) }}</p>
+        <button
+          class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+          (click)="openDialog(appointment)"
+        >
+          Edit Status
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
