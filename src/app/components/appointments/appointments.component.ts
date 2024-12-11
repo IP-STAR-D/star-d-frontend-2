@@ -10,6 +10,7 @@ import { Exam } from '../../models/exam.model';
 import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
+import { AuthService } from '../../services/auth.service';
 import { StatusTranslationService } from '../../services/status.service';
 import { FormsModule } from '@angular/forms';
 
@@ -43,7 +44,8 @@ export class AppointmentsComponent implements OnInit {
     private dialog: MatDialog,
     private examService: ExamService,
     private appointmentService: AppointmentsService,
-    private statusTranslationService: StatusTranslationService
+    private statusTranslationService: StatusTranslationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -65,12 +67,9 @@ export class AppointmentsComponent implements OnInit {
   }
 
   loadExamsByProfessor(): void {
-    if (localStorage.getItem('user_id'))
-      this.professorId = Number(localStorage.getItem('user_id'));
+    this.professorId = Number(this.authService.getUserId());
 
     if (!this.professorId) {
-      // console.log(localStorage.getItem('user_id'));
-      // console.log(this.professorId);
       console.error('Profesorul nu are ID valid.');
       return;
     }
@@ -78,7 +77,6 @@ export class AppointmentsComponent implements OnInit {
     this.examService.getExamsByProfessorId(this.professorId).subscribe({
       next: (data: Exam[]) => {
         this.exams = data; // Salvează datele primite de la API în variabila exams
-        // console.log('Examene preluate:', this.exams);
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);

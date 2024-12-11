@@ -32,13 +32,13 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        this.authService.saveToken(response.token, response.userId, response.email, response.role);
-
-        if (response.role === 'professor') {
+        this.authService.saveToken(response.token);
+        const role = this.authService.getRole();
+        if (role === 'professor') {
           this.router.navigate(['/professor/appointments']);
-        } else if (response.role === 'student') {
+        } else if (role === 'student') {
           this.router.navigate(['/student/exams']);
-        } else if (response.role === 'admin') {
+        } else if (role === 'admin') {
           this.router.navigate(['/admin']);
         } else {
           this.errorMessage = 'Rol necunoscut';
