@@ -34,12 +34,13 @@ export class LoginComponent {
       next: (response) => {
         this.authService.saveToken(response.token);
         const role = this.authService.getRole();
-        if (role === 'professor') {
-          this.router.navigate(['/professor/appointments']);
-        } else if (role === 'student') {
-          this.router.navigate(['/student/exams']);
-        } else if (role === 'admin') {
+
+        if (response.isAdmin) {
           this.router.navigate(['/admin']);
+        } else if (response.role === 'professor') {
+          this.router.navigate(['/professor/appointments']);
+        } else if (response.role === 'student') {
+          this.router.navigate(['/student/exams']);
         } else {
           this.errorMessage = 'Rol necunoscut';
         }
