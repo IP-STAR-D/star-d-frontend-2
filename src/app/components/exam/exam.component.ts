@@ -158,9 +158,9 @@ export class ExamComponent {
     this.appointmentService.getAppointments().subscribe({
       next: (data: Appointment[]) => {
         this.myAppointments = data;
+        this.snackBarService.show('Eroare la preluarea programarilor!', 'success');
       },
       error: (err) => {
-        console.error('Eroare la preluarea programarilor:', err);
         this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
       },
     });
@@ -279,7 +279,6 @@ export class ExamComponent {
     const appointmentToCancel = this.myAppointments.find((appointment) => appointment.appointmentId === appointmentId);
 
     if (!appointmentToCancel) {
-      console.error('Appointment not found.');
       this.snackBarService.show('Eroare: Programarea nu a fost gasita.', 'error');
       return;
     }
@@ -301,7 +300,6 @@ export class ExamComponent {
           this.snackBarService.show('Programarea a fost anulata.', 'success');
         },
         error: (err) => {
-          console.error('Error updating appointment:', err);
           this.snackBarService.show('Eroare la anularea programarii.', 'error');
         },
       });
@@ -325,10 +323,12 @@ export class ExamComponent {
 
     if (scheduledAppointments && scheduledAppointments.length > 0) {
       this.showPopup('Aveti deja o programare confirmata pentru acest examen.');
+      this.snackBarService.show('Aveti deja o programare confirmata pentru acest examen.', 'success');
       return;
     }
     if (pendingAppointments && pendingAppointments.length > 0) {
       this.showPopup('Aveti deja o programare in asteptare pentru acest examen.');
+      this.snackBarService.show('Aveti deja o programare in asteptare pentru acest examen!', 'error');
       return;
     }
 
@@ -371,12 +371,11 @@ export class ExamComponent {
           },
           error: (err) => {
             this.showPopup(err.error.message);
-            console.error('Eroare la crearea programarii:', err);
+            this.snackBarService.show('Eroare la crearea programarii!' , 'error');
           },
         });
       },
       error: (err) => {
-        console.error('Eroare la preluarea studentului:', err);
         this.snackBarService.show('Eroare la preluarea datelor studentului.', 'error');
       },
     });
