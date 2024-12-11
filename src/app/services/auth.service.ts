@@ -29,7 +29,6 @@ export class AuthService {
   setAuthState(token: string): void {
     this.token = token;
     const decodedToken = this.decodeToken(token);
-    console.log(decodedToken)
     this.role = decodedToken.role;
     this.userId = decodedToken.id;
   }
