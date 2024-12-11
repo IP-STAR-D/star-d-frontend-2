@@ -13,6 +13,7 @@ import { AppointmentsService } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
 import { StatusTranslationService } from '../../services/status.service';
 import { FormsModule } from '@angular/forms';
+import { SnackBarService } from '../../services/snack-bar.service';
 
 @Component({
   selector: 'app-exams',
@@ -45,7 +46,8 @@ export class AppointmentsComponent implements OnInit {
     private examService: ExamService,
     private appointmentService: AppointmentsService,
     private statusTranslationService: StatusTranslationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBarService: SnackBarService
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +72,7 @@ export class AppointmentsComponent implements OnInit {
     this.professorId = Number(this.authService.getUserId());
 
     if (!this.professorId) {
-      console.error('Profesorul nu are ID valid.');
+      this.snackBarService.show('Profesorul are ID invalid!', 'error');
       return;
     }
 
@@ -79,7 +81,7 @@ export class AppointmentsComponent implements OnInit {
         this.exams = data; // Salvează datele primite de la API în variabila exams
       },
       error: (err) => {
-        console.error('Eroare la preluarea examenelor:', err);
+        this.snackBarService.show('Eroare preluarea exemenelor!', 'error');
       },
     });
   }
@@ -139,7 +141,7 @@ export class AppointmentsComponent implements OnInit {
         this.filteredAppointments = [...this.appointments]; // Inițial, toate programările sunt vizibile
       },
       error: (err) => {
-        console.error('Eroare la preluarea programarilor:', err);
+        this.snackBarService.show('Eroare preluarea exmenelor', 'error');
       },
     });
   }
@@ -163,12 +165,10 @@ export class AppointmentsComponent implements OnInit {
     
     this.appointmentService.updateAppointment(appointment.appointmentId, appointment).subscribe(
       (updatedAppointment) => {
-        console.log('Appointment updated successfully:', updatedAppointment);
-        // Poți face ceva cu appointment-ul actualizat
+        this.snackBarService.show('Am modififcat cererea!', 'success');
       },
       (error) => {
-        console.error('Error updating appointment:', error);
-        // Poți gestiona erorile aici
+        this.snackBarService.show('nu am modificat cererea!', 'error');
       }
     );
   }

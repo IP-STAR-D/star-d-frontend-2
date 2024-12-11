@@ -1,18 +1,6 @@
 <main>
   <!-- Filtre pentru examene -->
   <div class="filters mb-4 flex gap-4">
-    <!-- Filtru pentru profesori -->
-    <select
-      class="border rounded p-2"
-      [(ngModel)]="professorFilter"
-      (change)="applyFilters()"
-    >
-      <option [value]="null">Toți profesorii</option>
-      <option *ngFor="let professor of professors" [value]="professor.userId">
-        {{ professor.user?.firstName }} {{ professor.user?.lastName }}
-      </option>
-    </select>
-
     <!-- Filtru pentru statusul programărilor -->
     <select
       class="border rounded p-2"

@@ -30,7 +30,6 @@ export class ExamsComponent implements OnInit {
   professors: Professor[] = [];
 
   filteredExams: Exam[] = [];
-  professorFilter: number | null = null;
   statusFilter: string = '';
 
   constructor(
@@ -46,7 +45,6 @@ export class ExamsComponent implements OnInit {
   ngOnInit(): void {
     this.loadExams();
     this.loadAppointments();
-    this.loadProfessors();
   }
 
   loadExams(): void {
@@ -56,7 +54,6 @@ export class ExamsComponent implements OnInit {
         this.applyFilters();
       },
       error: (err) => {
-        console.error('Eroare la preluarea examenelor:', err);
         this.snackBarService.show('Eroare la preluarea examenelor!', 'error');
       },
     });
@@ -69,23 +66,7 @@ export class ExamsComponent implements OnInit {
         this.applyFilters();
       },
       error: (err) => {
-        console.error('Eroare la preluarea programărilor:', err);
         this.snackBarService.show('Eroare la preluarea programărilor!', 'error');
-      },
-    });
-  }
-
-  loadProfessors(): void {
-    this.professorService.getProfessors().subscribe({
-      next: (data: Professor[]) => {
-        this.professors = data.map((professor) => {
-          const user = this.getUserForProfessor(professor.userId);
-          return { ...professor, user };
-        });
-      },
-      error: (err) => {
-        console.error('Eroare la preluarea profesorilor:', err);
-        this.snackBarService.show('Eroare la preluarea profesorilor!' , 'error');
       },
     });
   }
@@ -97,7 +78,7 @@ export class ExamsComponent implements OnInit {
         user = data;
       },
       error: (err) => {
-        console.error('Eroare la preluarea utilizatorului:', err);
+        this.snackBarService.show('Eroare la preluarea utilizatorului!' , 'error');
       },
     });
     return user;
@@ -105,12 +86,11 @@ export class ExamsComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredExams = this.exams.filter((exam) => {
-      const matchesProfessor = this.professorFilter ? exam.professorId === this.professorFilter : true;
       const appointment = this.getAppointmentsForExam(exam.examId);
       const matchesStatus = this.statusFilter
         ? appointment && appointment.status.toLowerCase() === this.statusFilter
         : true;
-      return matchesProfessor && matchesStatus;
+      return matchesStatus;
     });
   }
 
