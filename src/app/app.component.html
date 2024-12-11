@@ -1,11 +1,9 @@
-<div *ngIf="!isLoading">
-  <div class="flex flex-col h-screen">
-    <app-header />
-    <div class="flex-grow flex justify-center">
-      <div class="w-full max-w-screen-2xl py-12 px-2 sm:px-12">
-        <router-outlet />
-      </div>
+<div class="flex flex-col h-screen">
+  <app-header />
+  <div class="flex-grow flex justify-center">
+    <div class="w-full max-w-screen-2xl py-12 px-2 sm:px-12">
+      <router-outlet />
     </div>
-    <app-footer />
   </div>
+  <app-footer />
 </div>
