@@ -13,7 +13,7 @@ export class AuthService {
   private role: string | null = null;
   private userId: string | null = null;
 
-  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) { }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password });
@@ -32,7 +32,7 @@ export class AuthService {
     this.role = decodedToken.role;
     this.userId = decodedToken.id;
   }
-  
+
   loadAuthState(): Promise<void> {
     return new Promise((resolve) => {
       if (isPlatformBrowser(this.platformId)) {

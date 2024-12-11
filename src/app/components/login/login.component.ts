@@ -1,11 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { usersData } from '../../data/user.data';
+import { Inject, PLATFORM_ID, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service';
+import { CommonModule, isPlatformServer } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,9 +21,11 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
   users: any = [];
+  isServer = false;
 
-  constructor(private router: Router, private authService: AuthService, private snackBarService: SnackBarService) {}
-
+  constructor(private router: Router, private authService: AuthService, private snackBarService: SnackBarService, @Inject(PLATFORM_ID) private platformId: object) {
+    this.isServer = isPlatformServer(this.platformId);
+  }
   onLogin(): void {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
