@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Appointment } from '../../models/appointment.model';
@@ -15,7 +16,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule, CommonModule]
 })
 export class AdminComponent implements OnInit {
   appointments: Appointment[] = [];
