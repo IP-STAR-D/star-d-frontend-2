@@ -17,6 +17,8 @@ export class redirectGuard implements CanActivate {
         this.router.navigate(['/student/exams']);
       } else if (role === 'professor') {
         this.router.navigate(['/professor/appointments']);
+      } else if (role === 'admin') {
+        this.router.navigate(['/admin']);
       }
     } else {
       this.router.navigate(['/login']);
