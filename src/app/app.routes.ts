@@ -8,10 +8,10 @@ import { redirectGuard } from './guards/redirect.guard';
 import { AdminComponent } from './components/admin/admin.component';
 
 export const routes: Routes = [
-  { path: 'student/exams', component: ExamsComponent, canActivate: [authGuard] },
-  { path: 'student/exams/:id', component: ExamComponent, canActivate: [authGuard] },
-  { path: 'professor/appointments', component: AppointmentsComponent, canActivate: [authGuard] },
-  { path: 'admin', component: AdminComponent, canActivate: [authGuard]},
+  { path: 'student/exams', component: ExamsComponent, canActivate: [authGuard], data: { requiredRole: 'student' } },
+  { path: 'student/exams/:id', component: ExamComponent, canActivate: [authGuard], data: { requiredRole: 'student' } },
+  { path: 'professor/appointments', component: AppointmentsComponent, canActivate: [authGuard], data: { requiredRole: 'professor' } },
+  { path: 'admin', component: AdminComponent, canActivate: [authGuard], data: { requiredRole: 'admin' }},
   { path: 'login', component: LoginComponent },
   { path: '**', canActivate: [redirectGuard], component: LoginComponent },
 ];

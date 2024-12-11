@@ -9,6 +9,9 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
+  private token: string | null = null;
+  private role: string | null = null;
+  private userId: string | null = null;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {}
 
@@ -16,53 +19,69 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl, { email, password });
   }
 
-  saveToken(token: string, user_id: string, email: string, role: string): void {
+  saveToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('auth_token', token);
-      localStorage.setItem('user_id', user_id);
-      localStorage.setItem('email', email);
-      localStorage.setItem('role', role);
     }
+    this.setAuthState(token);
+  }
+
+  setAuthState(token: string): void {
+    this.token = token;
+    const decodedToken = this.decodeToken(token);
+    console.log(decodedToken)
+    this.role = decodedToken.role;
+    this.userId = decodedToken.id;
+  }
+  
+  loadAuthState(): Promise<void> {
+    return new Promise((resolve) => {
+      if (isPlatformBrowser(this.platformId)) {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+          this.setAuthState(token);
+        }
+      }
+      resolve();
+    });
+  }
+
+  decodeToken(token: string): any {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
   }
 
   getToken(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('auth_token');
-    }
-    return null;
-  }
-
-  getUserId(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('user_id');
-    }
-    return null;
-  }
-
-  getEmail(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('email');
-    }
-    return null;
+    return this.token;
   }
 
   getRole(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('role');
-    }
-    return null;
+    return this.role;
+  }
+
+  getUserId(): string | null {
+    return this.userId;
   }
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_id');
-      localStorage.removeItem('email');
-      localStorage.removeItem('role');
     }
+  }
+  private isTokenExpired(token: string): boolean {
+    const decodedToken = this.decodeToken(token);
+    if (!decodedToken.exp) {
+      return true;
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decodedToken.exp < currentTime;
   }
 
   isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    if (!this.token) {
+      return false;
+    }
+    return !this.isTokenExpired(this.token);
   }
 }

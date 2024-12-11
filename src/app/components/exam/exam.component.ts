@@ -33,6 +33,7 @@ import { ClassroomService } from '../../services/classroom.service';
 import { StudentService } from '../../services/student.service';
 import { StatusTranslationService } from '../../services/status.service';
 import { SnackBarService } from '../../services/snack-bar.service';
+import { AuthService } from '../../services/auth.service';
 
 import { PopupDialogComponent } from '../popup-dialog/popup-dialog.component';
 
@@ -86,7 +87,8 @@ export class ExamComponent {
     private datePipe: DatePipe,
     private dialog: MatDialog,
     private statusTranslationService: StatusTranslationService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -346,7 +348,7 @@ export class ExamComponent {
     const startTime = new Date(`${formattedDate}T${this.selectedTimeStart}:00`);
     const endTime = new Date(`${formattedDate}T${this.selectedTimeEnd}:00`);
 
-    const user_id = Number(localStorage.getItem('user_id'));
+    const user_id = Number(this.authService.getUserId());
 
     this.studentService.getStudentById(user_id).subscribe({
       next: (data: Student) => {
