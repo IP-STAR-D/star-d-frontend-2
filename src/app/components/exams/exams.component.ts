@@ -57,7 +57,7 @@ export class ExamsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);
-        this.snackBarService.show('Eroare la preluarea examenelor!');
+        this.snackBarService.show('Eroare la preluarea examenelor!', 'error');
       },
     });
   }
@@ -70,7 +70,7 @@ export class ExamsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea programărilor:', err);
-        this.snackBarService.show('Eroare la preluarea programărilor!');
+        this.snackBarService.show('Eroare la preluarea programărilor!', 'error');
       },
     });
   }
@@ -85,7 +85,7 @@ export class ExamsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea profesorilor:', err);
-        this.snackBarService.show('Eroare la preluarea profesorilor!');
+        this.snackBarService.show('Eroare la preluarea profesorilor!' , 'error');
       },
     });
   }

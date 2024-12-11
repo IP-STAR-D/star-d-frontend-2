@@ -13,11 +13,14 @@ export class SnackBarService {
    * @param action The action button label (optional, default is 'Inchide').
    * @param duration The duration in milliseconds (optional, default is 10000ms).
    */
-  show(message: string, duration: number = 10000, action: string = 'Inchide'): void {
+  show(message: string, type: 'success' | 'error' = 'success', duration: number = 10000, action: string = 'Inchide'): void {
+    const panelClass = type === 'success' ? 'snack-bar-success' : 'snack-bar-error';
+
     this.snackBar.open(message, action, {
       duration: duration,
-      horizontalPosition: 'right',
-      verticalPosition: 'bottom',
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: [panelClass], // Aplica clasa CSS
     });
   }
 }

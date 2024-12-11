@@ -105,7 +105,7 @@ export class ExamComponent {
       },
       error: (err) => {
         console.error('Eroare la preluarea examenului:', err);
-        this.snackBarService.show('Eroare la preluarea examenului!');
+        this.snackBarService.show('Eroare la preluarea examenului!', 'error');
       },
     });
   }
@@ -117,7 +117,7 @@ export class ExamComponent {
       },
       error: (err) => {
         console.error('Eroare la preluarea salilor:', err);
-        this.snackBarService.show('Eroare la preluarea salilor!');
+        this.snackBarService.show('Eroare la preluarea salilor!', 'error');
       },
     });
   }
@@ -146,7 +146,7 @@ export class ExamComponent {
             this.appointmentsMatches = [];
           } else {
             console.error('Eroare la preluarea programarilor:', err);
-            this.snackBarService.show('Eroare la preluarea programarilor!');
+            this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
           }
         },
       });
@@ -159,7 +159,7 @@ export class ExamComponent {
       },
       error: (err) => {
         console.error('Eroare la preluarea programarilor:', err);
-        this.snackBarService.show('Eroare la preluarea programarilor!');
+        this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
       },
     });
   }
@@ -278,7 +278,7 @@ export class ExamComponent {
 
     if (!appointmentToCancel) {
       console.error('Appointment not found.');
-      this.snackBarService.show('Eroare: Programarea nu a fost gasita.');
+      this.snackBarService.show('Eroare: Programarea nu a fost gasita.', 'error');
       return;
     }
 
@@ -296,11 +296,11 @@ export class ExamComponent {
       this.appointmentService.updateAppointment(appointmentId, updatedAppointment).subscribe({
         next: () => {
           this.loadMyAppointments();
-          this.snackBarService.show('Programarea a fost anulata.');
+          this.snackBarService.show('Programarea a fost anulata.', 'success');
         },
         error: (err) => {
           console.error('Error updating appointment:', err);
-          this.snackBarService.show('Eroare la anularea programarii.');
+          this.snackBarService.show('Eroare la anularea programarii.', 'error');
         },
       });
     }
@@ -337,7 +337,7 @@ export class ExamComponent {
       this.timeEndFormControl.invalid ||
       this.classroomFormControl.invalid
     ) {
-      this.snackBarService.show('Verificati campurile si incercati din nou.');
+      this.snackBarService.show('Verificati campurile si incercati din nou.', 'error');
       return;
     }
 
@@ -364,7 +364,7 @@ export class ExamComponent {
 
         this.appointmentService.createAppointment(newAppointment).subscribe({
           next: (data: Appointment) => {
-            this.snackBarService.show('Programarea a fost creata.');
+            this.snackBarService.show('Programarea a fost creata.', 'success');
             this.router.navigate(['student/exams']);
           },
           error: (err) => {
@@ -375,7 +375,7 @@ export class ExamComponent {
       },
       error: (err) => {
         console.error('Eroare la preluarea studentului:', err);
-        this.snackBarService.show('Eroare la preluarea datelor studentului.');
+        this.snackBarService.show('Eroare la preluarea datelor studentului.', 'error');
       },
     });
   }

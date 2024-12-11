@@ -12,3 +12,25 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.snack-bar-success {
+  background-color: #4caf50 !important; /* Verde */
+  color: #ffffff !important; /* Text alb */
+  border-radius: 4px; /* Opțional */
+}
+
+.snack-bar-error {
+  background-color: #f44336 !important; /* Roșu */
+  color: #ffffff !important; /* Text alb */
+  border-radius: 4px; /* Opțional */
+}
+
+::ng-deep .snack-bar-success {
+  background-color: #4caf50 !important;
+  color: #ffffff !important;
+}
+
+::ng-deep .snack-bar-error {
+  background-color: #f44336 !important;
+  color: #ffffff !important;
+}
