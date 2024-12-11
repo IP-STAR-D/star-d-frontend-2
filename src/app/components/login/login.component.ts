@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { SnackBarService } from '../../services/snack-bar.service';
 
 @Component({
   selector: 'app-login',
@@ -24,12 +25,9 @@ export class LoginComponent {
   errorMessage: string = '';
   users: any = [];
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService, private snackBarService: SnackBarService) {}
 
   onLogin(): void {
-    console.log('Email trimis:', this.email);
-    console.log('Parola trimisa:', this.password);
-
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
@@ -46,7 +44,7 @@ export class LoginComponent {
         }
       },
       error: (err) => {
-        console.error('Eroare login:', err);
+        this.snackBarService.show('Eroare login!', 'error');
         this.errorMessage = 'Email sau parola invalida!';
       },
     });
