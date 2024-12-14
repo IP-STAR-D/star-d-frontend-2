@@ -26,6 +26,7 @@ import { Appointment, Matches, FilteredAppointmentsResponse } from '../../models
 import { Exam } from '../../models/exam.model';
 import { Classroom } from '../../models/classroom.model';
 import { Student } from '../../models/student.model';
+import { Semester } from '../../models/semester.model';
 
 import { AppointmentsService } from '../../services/appointment.service';
 import { ExamService } from '../../services/exam.service';
@@ -34,6 +35,7 @@ import { StudentService } from '../../services/student.service';
 import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { AuthService } from '../../services/auth.service';
+import { SemesterService } from '../../services/semester.service';
 
 import { PopupDialogComponent } from '../popup-dialog/popup-dialog.component';
 
@@ -57,13 +59,13 @@ import { PopupDialogComponent } from '../popup-dialog/popup-dialog.component';
     ReactiveFormsModule,
     MatDialogModule,
   ],
-  host: { '[style.--sys-inverse-surface]': 'red' },
   templateUrl: './exam.component.html',
   styleUrl: './exam.component.css',
 })
 export class ExamComponent {
   id: number | null = null;
   exam: Exam | null = null;
+  semester: Semester | null = null;
   appointments: Appointment[] = [];
   appointmentsMatches: Matches[] = [];
   myAppointments: Appointment[] = [];
@@ -77,6 +79,9 @@ export class ExamComponent {
   minTime: string = '08:00';
   maxTime: string = '22:00';
 
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -84,6 +89,7 @@ export class ExamComponent {
     private appointmentService: AppointmentsService,
     private classroomService: ClassroomService,
     private studentService: StudentService,
+    private semesterService: SemesterService,
     private datePipe: DatePipe,
     private dialog: MatDialog,
     private statusTranslationService: StatusTranslationService,
@@ -96,6 +102,7 @@ export class ExamComponent {
     this.loadExam();
     this.loadClassrooms();
     this.loadMyAppointments();
+    this.loadSemester();
   }
 
   loadExam(): void {
@@ -108,6 +115,25 @@ export class ExamComponent {
       error: (err) => {
         console.error('Eroare la preluarea examenului:', err);
         this.snackBarService.show('Eroare la preluarea examenului!', 'error');
+      },
+    });
+  }
+
+  loadSemester(): void {
+    this.semesterService.getCurrentSemester().subscribe({
+      next: (data: Semester) => {
+        this.semester = data;
+        if (this.exam?.type === 'exam') {
+          this.minDate = new Date(this.semester.examStart);
+          this.maxDate = new Date(this.semester.examEnd);
+        } else if (this.exam?.type === 'colloquy') {
+          this.minDate = new Date(this.semester.colloquyStart);
+          this.maxDate = new Date(this.semester.colloquyEnd);
+        }
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea semestrului:', err);
+        this.snackBarService.show('Eroare la preluarea semestrului!', 'error');
       },
     });
   }
@@ -158,7 +184,6 @@ export class ExamComponent {
     this.appointmentService.getAppointments().subscribe({
       next: (data: Appointment[]) => {
         this.myAppointments = data;
-        this.snackBarService.show('Eroare la preluarea programarilor!', 'success');
       },
       error: (err) => {
         this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
@@ -323,7 +348,7 @@ export class ExamComponent {
 
     if (scheduledAppointments && scheduledAppointments.length > 0) {
       this.showPopup('Aveti deja o programare confirmata pentru acest examen.');
-      this.snackBarService.show('Aveti deja o programare confirmata pentru acest examen.', 'success');
+      this.snackBarService.show('Aveti deja o programare confirmata pentru acest examen.', 'error');
       return;
     }
     if (pendingAppointments && pendingAppointments.length > 0) {
@@ -371,7 +396,7 @@ export class ExamComponent {
           },
           error: (err) => {
             this.showPopup(err.error.message);
-            this.snackBarService.show('Eroare la crearea programarii!' , 'error');
+            this.snackBarService.show('Eroare la crearea programarii!', 'error');
           },
         });
       },

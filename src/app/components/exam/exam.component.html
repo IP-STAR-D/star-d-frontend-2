@@ -24,6 +24,8 @@
           <input
             matInput
             name="selected_date"
+            [min]="minDate"
+            [max]="maxDate"
             [matDatepicker]="picker"
             [formControl]="dateFormControl"
             [(ngModel)]="selectedDate"

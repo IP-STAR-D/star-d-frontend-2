@@ -78,7 +78,7 @@ export class ExamsComponent implements OnInit {
         user = data;
       },
       error: (err) => {
-        this.snackBarService.show('Eroare la preluarea utilizatorului!' , 'error');
+        this.snackBarService.show('Eroare la preluarea utilizatorului!', 'error');
       },
     });
     return user;
