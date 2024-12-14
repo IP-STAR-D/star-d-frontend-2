@@ -6,6 +6,7 @@ export class Exam {
   semester: number;
   user: { email: string; firstName: string; lastName: string };
   year: number;
+  type: 'exam' | 'colloquy';
 
   constructor(
     examId: number,
@@ -14,7 +15,8 @@ export class Exam {
     degreeId: number,
     semester: number,
     user: { email: string; firstName: string; lastName: string },
-    year: number
+    year: number,
+    type: 'exam' | 'colloquy'
   ) {
     this.examId = examId;
     this.professorId = professorId;
@@ -23,5 +25,6 @@ export class Exam {
     this.semester = semester;
     this.year = year;
     this.user = user;
+    this.type = type;
   }
 }
