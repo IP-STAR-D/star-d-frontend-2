@@ -28,6 +28,12 @@ export class StudentService {
     return this.http.get<Student[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
+  // Check if a student is the boss of their group
+  isStudentBoss(): Observable<{ isBoss: boolean }> {
+    const url = `${this.apiUrl}/is_boss`;
+    return this.http.get<{ isBoss: boolean }>(url, { headers: this.getAuthHeaders() });
+  }
+
   // Retrieve a single student by ID
   getStudentById(id: number): Observable<Student> {
     const url = `${this.apiUrl}/${id}`;
@@ -38,28 +44,5 @@ export class StudentService {
   getStudentsByGroupId(groupId: number): Observable<Student[]> {
     const url = `${this.apiUrl}/group/${groupId}`;
     return this.http.get<Student[]>(url, { headers: this.getAuthHeaders() });
-  }
-
-  // Retrieve students by degree ID
-  getStudentsByDegreeId(degreeId: number): Observable<Student[]> {
-    const url = `${this.apiUrl}/degree/${degreeId}`;
-    return this.http.get<Student[]>(url, { headers: this.getAuthHeaders() });
-  }
-
-  // Add a new student
-  addStudent(student: Student): Observable<Student> {
-    return this.http.post<Student>(this.apiUrl, student, { headers: this.getAuthHeaders() });
-  }
-
-  // Update an existing student
-  updateStudent(id: number, student: Student): Observable<Student> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.put<Student>(url, student, { headers: this.getAuthHeaders() });
-  }
-
-  // Delete a student
-  deleteStudent(id: number): Observable<void> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<void>(url, { headers: this.getAuthHeaders() });
   }
 }

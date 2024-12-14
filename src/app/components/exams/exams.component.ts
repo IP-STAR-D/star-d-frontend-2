@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
 
 import { Exam } from '../../models/exam.model';
 import { Appointment } from '../../models/appointment.model';
@@ -15,7 +16,7 @@ import { ProfessorService } from '../../services/professor.service';
 import { UserService } from '../../services/user.service';
 import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
-import { FormsModule } from '@angular/forms';
+import { StudentService } from '../../services/student.service';
 
 @Component({
   selector: 'app-exams',
@@ -39,7 +40,8 @@ export class ExamsComponent implements OnInit {
     private professorService: ProfessorService,
     private userService: UserService,
     private statusTranslationService: StatusTranslationService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    private studentService: StudentService
   ) {}
 
   ngOnInit(): void {
@@ -118,6 +120,17 @@ export class ExamsComponent implements OnInit {
   }
 
   redirectToExam(examId: number): void {
-    this.router.navigate([`student/exams/${examId}`]);
+    this.studentService.isStudentBoss().subscribe({
+      next: (response) => {
+        if (response.isBoss) {
+          this.router.navigate([`student/exams/${examId}`]);
+        } else {
+          this.snackBarService.show('Doar sefii de grupa pot accesa aceasta pagina!', 'error');
+        }
+      },
+      error: () => {
+        this.snackBarService.show('Eroare la verificarea permisiunilor!', 'error');
+      },
+    });
   }
 }
