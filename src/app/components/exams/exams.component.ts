@@ -9,6 +9,7 @@ import { Exam } from '../../models/exam.model';
 import { Appointment } from '../../models/appointment.model';
 import { Professor } from '../../models/professor.model';
 import { User } from '../../models/user.model';
+import { Classroom } from '../../models/classroom.model';
 
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
@@ -17,6 +18,7 @@ import { UserService } from '../../services/user.service';
 import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { StudentService } from '../../services/student.service';
+import { ClassroomService } from '../../services/classroom.service';
 
 @Component({
   selector: 'app-exams',
@@ -29,6 +31,7 @@ export class ExamsComponent implements OnInit {
   exams: Exam[] = [];
   appointments: Appointment[] = [];
   professors: Professor[] = [];
+  classrooms: Classroom[] = [];
 
   filteredExams: Exam[] = [];
   statusFilter: string = '';
@@ -41,12 +44,14 @@ export class ExamsComponent implements OnInit {
     private userService: UserService,
     private statusTranslationService: StatusTranslationService,
     private snackBarService: SnackBarService,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private classroomService: ClassroomService
   ) {}
 
   ngOnInit(): void {
     this.loadExams();
     this.loadAppointments();
+    this.loadClassrooms();
   }
 
   loadExams(): void {
@@ -68,7 +73,19 @@ export class ExamsComponent implements OnInit {
         this.applyFilters();
       },
       error: (err) => {
-        this.snackBarService.show('Eroare la preluarea programărilor!', 'error');
+        this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
+      },
+    });
+  }
+
+  loadClassrooms(): void {
+    this.classroomService.getClassrooms().subscribe({
+      next: (data: Classroom[]) => {
+        this.classrooms = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea salilor:', err);
+        this.snackBarService.show('Eroare la preluarea salilor!', 'error');
       },
     });
   }
@@ -109,6 +126,11 @@ export class ExamsComponent implements OnInit {
     }
 
     return null;
+  }
+
+  getClassroomName(classroomId: number): string {
+    const classroom = this.classrooms.find((classroom) => classroom.classroomId === classroomId);
+    return classroom ? classroom.classroomName : '';
   }
 
   getStatusTranslation(status: string): string {

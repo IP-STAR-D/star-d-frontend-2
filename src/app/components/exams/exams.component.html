@@ -41,9 +41,12 @@
                 </span>
               </div>
 
-              <p class="text-gray-600 text-sm">
+              <span class="text-gray-800 mr-2">
+                {{ getClassroomName(appointment.classroomId) }}
+              </span>
+              <span class="text-gray-600 text-sm">
                 {{ appointment.startTime | date : "dd MMMM yyyy" }}
-              </p>
+              </span>
             </div>
 
             <ng-template #noAppointments>
