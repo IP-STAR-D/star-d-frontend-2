@@ -279,6 +279,11 @@ export class ExamComponent {
     return this.myAppointments.filter((appointment) => appointment.examId === this.id);
   }
 
+  getClassroomName(classroomId: number): string {
+    const classroom = this.classrooms.find((classroom) => classroom.classroomId === classroomId);
+    return classroom ? classroom.classroomName : '';
+  }
+
   getStatusTranslation(status: string): string {
     return this.statusTranslationService.getStatusTranslation(status);
   }

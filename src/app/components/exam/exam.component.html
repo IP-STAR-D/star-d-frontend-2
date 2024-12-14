@@ -180,9 +180,12 @@
                 </span>
               </div>
 
-              <p class="text-gray-600 text-sm !m-0">
+              <span class="text-gray-800 mr-2">
+                {{ getClassroomName(appointment.classroomId) }}
+              </span>
+              <span class="text-gray-600 text-sm !m-0">
                 {{ appointment.startTime | date : "dd MMMM yyyy" }}
-              </p>
+              </span>
 
               <!-- Cancel Button for Pending Appointments -->
               <button
