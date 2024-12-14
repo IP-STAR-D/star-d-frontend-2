@@ -111,6 +111,7 @@ export class ExamComponent {
     this.examService.getExamById(this.id).subscribe({
       next: (data: Exam) => {
         this.exam = data;
+        this.trySetDates();
       },
       error: (err) => {
         console.error('Eroare la preluarea examenului:', err);
@@ -123,13 +124,7 @@ export class ExamComponent {
     this.semesterService.getCurrentSemester().subscribe({
       next: (data: Semester) => {
         this.semester = data;
-        if (this.exam?.type === 'exam') {
-          this.minDate = new Date(this.semester.examStart);
-          this.maxDate = new Date(this.semester.examEnd);
-        } else if (this.exam?.type === 'colloquy') {
-          this.minDate = new Date(this.semester.colloquyStart);
-          this.maxDate = new Date(this.semester.colloquyEnd);
-        }
+        this.trySetDates();
       },
       error: (err) => {
         console.error('Eroare la preluarea semestrului:', err);
@@ -138,10 +133,22 @@ export class ExamComponent {
     });
   }
 
+  trySetDates(): void {
+    if (this.exam && this.semester) {
+      if (this.exam.type === 'exam') {
+        this.minDate = new Date(this.semester.examStart);
+        this.maxDate = new Date(this.semester.examEnd);
+      } else if (this.exam.type === 'colloquy') {
+        this.minDate = new Date(this.semester.colloquyStart);
+        this.maxDate = new Date(this.semester.colloquyEnd);
+      }
+    }
+  }
+
   loadClassrooms(): void {
     this.classroomService.getClassrooms().subscribe({
       next: (data: Classroom[]) => {
-        this.classrooms = data;
+        this.classrooms = data.sort((a, b) => a.classroomName.localeCompare(b.classroomName));
       },
       error: (err) => {
         console.error('Eroare la preluarea salilor:', err);
