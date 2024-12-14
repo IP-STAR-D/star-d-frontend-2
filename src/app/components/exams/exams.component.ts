@@ -13,7 +13,7 @@ import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
 import { ProfessorService } from '../../services/professor.service';
 import { UserService } from '../../services/user.service';
-import { StatusTranslationService } from '../../services/status.service';
+import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { FormsModule } from '@angular/forms';
 
@@ -111,6 +111,10 @@ export class ExamsComponent implements OnInit {
 
   getStatusTranslation(status: string): string {
     return this.statusTranslationService.getStatusTranslation(status);
+  }
+
+  getTypeTranslation(type: string): string {
+    return this.statusTranslationService.getTypeTranslation(type);
   }
 
   redirectToExam(examId: number): void {

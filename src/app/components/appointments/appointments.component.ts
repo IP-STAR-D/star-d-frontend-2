@@ -11,19 +11,14 @@ import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
 import { AuthService } from '../../services/auth.service';
-import { StatusTranslationService } from '../../services/status.service';
+import { StatusTranslationService } from '../../services/translation.service';
 import { FormsModule } from '@angular/forms';
 import { SnackBarService } from '../../services/snack-bar.service';
 
 @Component({
   selector: 'app-exams',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatGridListModule,
-    MatCardModule,
-    FormsModule
-  ],
+  imports: [CommonModule, MatGridListModule, MatCardModule, FormsModule],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
 })
@@ -59,8 +54,8 @@ export class AppointmentsComponent implements OnInit {
     const dialogRef = this.dialog.open(AppointmentModal, {
       data: { appointment, exam: this.getExam(appointment.examId) },
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Dialog result:', result);
         this.updateStatus(appointment, result.status);
@@ -93,35 +88,33 @@ export class AppointmentsComponent implements OnInit {
 
   applyFilters(): void {
     //console.log("Applying filters:", this.statusFilter, this.examFilter);  // Debugging
-  
+
     this.filteredAppointments = this.appointments.filter((appointment) => {
       const matchesStatus =
-        this.statusFilter === '' ||
-        appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
-  
+        this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
+
       // Modificare: Verificăm dacă `examFilter` este gol
-      const matchesExam =
-        this.examFilter === '' || appointment.examId === Number(this.examFilter);
-  
+      const matchesExam = this.examFilter === '' || appointment.examId === Number(this.examFilter);
+
       //console.log("Appointment matches: ", appointment, matchesStatus, matchesExam);  // Debugging
-  
+
       return matchesStatus && matchesExam;
     });
-  
+
     //console.log("Filtered appointments:", this.filteredAppointments);  // Debugging
   }
-  
+
   onStatusFilterChange(event: Event): void {
     const status = (event.target as HTMLSelectElement).value;
     this.statusFilter = status;
     this.applyFilters();
   }
-  
+
   onExamFilterChange(event: Event): void {
     const examId = (event.target as HTMLSelectElement).value;
     this.examFilter = examId;
     this.applyFilters();
-  }  
+  }
 
   loadMyAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
@@ -162,7 +155,7 @@ export class AppointmentsComponent implements OnInit {
 
   updateStatus(appointment: Appointment, status: string) {
     appointment.status = status;
-    
+
     this.appointmentService.updateAppointment(appointment.appointmentId, appointment).subscribe(
       (updatedAppointment) => {
         this.snackBarService.show('Am modififcat cererea!', 'success');

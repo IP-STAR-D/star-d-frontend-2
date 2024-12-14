@@ -31,7 +31,7 @@ import { AppointmentsService } from '../../services/appointment.service';
 import { ExamService } from '../../services/exam.service';
 import { ClassroomService } from '../../services/classroom.service';
 import { StudentService } from '../../services/student.service';
-import { StatusTranslationService } from '../../services/status.service';
+import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { AuthService } from '../../services/auth.service';
 

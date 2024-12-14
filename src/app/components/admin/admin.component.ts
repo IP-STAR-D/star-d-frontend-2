@@ -7,7 +7,7 @@ import { Exam } from '../../models/exam.model';
 import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
-import { StatusTranslationService } from '../../services/status.service';
+import { StatusTranslationService } from '../../services/translation.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule],
 })
 export class AdminComponent implements OnInit {
   appointments: Appointment[] = [];
@@ -43,8 +43,8 @@ export class AdminComponent implements OnInit {
     const dialogRef = this.dialog.open(AppointmentModal, {
       data: { appointment, exam: this.getExam(appointment.examId) },
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.updateStatus(appointment, result.status);
       }
@@ -54,22 +54,23 @@ export class AdminComponent implements OnInit {
   loadAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
       next: (data: any[]) => {
-        this.appointments = data.map(item => 
-          new Appointment(
-            item.appointmentId,
-            item.examId,
-            item.groupId,
-            item.status,
-            new Date(item.startTime),
-            new Date(item.endTime),
-            item.classroomId
-          )
+        this.appointments = data.map(
+          (item) =>
+            new Appointment(
+              item.appointmentId,
+              item.examId,
+              item.groupId,
+              item.status,
+              new Date(item.startTime),
+              new Date(item.endTime),
+              item.classroomId
+            )
         );
         this.filteredAppointments = [...this.appointments];
       },
       error: (err) => {
         console.error('Eroare la preluarea programarilor:', err);
-      }
+      },
     });
   }
 
@@ -80,17 +81,18 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => {
         console.error('Eroare la preluarea examenelor:', err);
-      }
+      },
     });
   }
 
   getExam(examId: number): Exam | null {
-    return this.exams.find(exam => exam.examId === examId) || null;
+    return this.exams.find((exam) => exam.examId === examId) || null;
   }
 
   applyFilters(): void {
-    this.filteredAppointments = this.appointments.filter(appointment => {
-      const matchesStatus = this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
+    this.filteredAppointments = this.appointments.filter((appointment) => {
+      const matchesStatus =
+        this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
       const matchesExam = this.examFilter === '' || appointment.examId === Number(this.examFilter);
       return matchesStatus && matchesExam;
     });
