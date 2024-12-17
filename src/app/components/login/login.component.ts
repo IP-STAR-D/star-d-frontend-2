@@ -1,4 +1,4 @@
-import { Inject, PLATFORM_ID, Component } from '@angular/core';
+import { Inject, PLATFORM_ID, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, isPlatformServer } from '@angular/common';
@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { SnackBarService } from '../../services/snack-bar.service';
+import { GoogleAuthService } from '../../services/googleAuthService.service';
 
 @Component({
   selector: 'app-login',
@@ -16,16 +17,26 @@ import { SnackBarService } from '../../services/snack-bar.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
   users: any = [];
   isServer = false;
 
-  constructor(private router: Router, private authService: AuthService, private snackBarService: SnackBarService, @Inject(PLATFORM_ID) private platformId: object) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private snackBarService: SnackBarService,
+    @Inject(PLATFORM_ID) private platformId: object,
+    private googleService: GoogleAuthService
+  ) {
     this.isServer = isPlatformServer(this.platformId);
   }
+  ngOnInit(): void {
+    //this.googleService.getFirebaseUserData();
+  }
+
   onLogin(): void {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
@@ -70,5 +81,27 @@ export class LoginComponent {
 
   isAuthenticated() {
     return this.authService.isAuthenticated();
+  }
+  handleGoogleLogin() {
+    this.googleService
+      .signInWithGoogle()
+      .then(() => {
+        console.log('Autentificare Google completă!');
+        const role = this.authService.getRole();
+
+        if (role === 'professor') {
+          this.router.navigate(['/professor/appointments']);
+        } else if (role === 'student') {
+          this.router.navigate(['/student/exams']);
+        } else if (role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.errorMessage = 'Rol necunoscut';
+        }
+      })
+      .catch((error) => {
+        console.error('Eroare la autentificare:', error);
+        this.errorMessage = 'Autentificare Google eșuată.';
+      });
   }
 }

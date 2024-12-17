@@ -6,9 +6,14 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
+import { initializeFirebase } from './firebase-config';
 
 export function initializeAuth(authService: AuthService): () => Promise<void> {
   return () => authService.loadAuthState();
+}
+
+export function initializeAppFirebase(): () => Promise<void> {
+  return () => initializeFirebase();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -23,6 +28,11 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeAuth,
       deps: [AuthService],
       multi: true,
-    }
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAppFirebase, // Inițializează Firebase
+      multi: true,
+    },
   ],
 };
