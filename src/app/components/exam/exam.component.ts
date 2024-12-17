@@ -174,6 +174,9 @@ export class ExamComponent {
         next: (data: FilteredAppointmentsResponse) => {
           this.appointments = data.appointments.filter((appointment) => appointment.status === 'scheduled');
           this.appointmentsMatches = data.matches;
+
+          this.timeStartFormControl.updateValueAndValidity();
+          this.timeEndFormControl.updateValueAndValidity();
         },
         error: (err) => {
           if (err.status === 404) {
@@ -263,6 +266,12 @@ export class ExamComponent {
   ]);
   classroomFormControl = new FormControl('', [Validators.required]);
 
+  onDateChange(newValue: string) {
+    this.selectedDate = newValue;
+    this.timeStartFormControl.updateValueAndValidity();
+    this.timeEndFormControl.updateValueAndValidity();
+  }
+
   onTimeStartChange(newValue: string) {
     this.selectedTimeStart = newValue;
     this.timeEndFormControl.updateValueAndValidity();
@@ -271,6 +280,12 @@ export class ExamComponent {
 
   onTimeEndChange(newValue: string) {
     this.selectedTimeEnd = newValue;
+    this.timeStartFormControl.updateValueAndValidity();
+    this.timeEndFormControl.updateValueAndValidity();
+  }
+
+  onClassroomChange(newValue: number) {
+    this.classroomId = newValue;
     this.timeStartFormControl.updateValueAndValidity();
     this.timeEndFormControl.updateValueAndValidity();
   }

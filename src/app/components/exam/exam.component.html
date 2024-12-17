@@ -28,6 +28,7 @@
             [max]="maxDate"
             [matDatepicker]="picker"
             [formControl]="dateFormControl"
+            (ngModelChange)="onDateChange($event)"
             [(ngModel)]="selectedDate"
             (dateChange)="loadAppointments()"
             required
@@ -102,6 +103,7 @@
             name="selected_classroom"
             [(ngModel)]="classroomId"
             [formControl]="classroomFormControl"
+            (ngModelChange)="onClassroomChange($event)"
             (selectionChange)="loadAppointments()"
             required
           >
