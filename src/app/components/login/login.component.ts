@@ -86,15 +86,12 @@ export class LoginComponent implements OnInit {
     this.googleService
       .signInWithGoogle()
       .then(() => {
-        console.log('Autentificare Google completă!');
         const role = this.authService.getRole();
 
         if (role === 'professor') {
           this.router.navigate(['/professor/appointments']);
         } else if (role === 'student') {
           this.router.navigate(['/student/exams']);
-        } else if (role === 'admin') {
-          this.router.navigate(['/admin']);
         } else {
           this.errorMessage = 'Rol necunoscut';
         }

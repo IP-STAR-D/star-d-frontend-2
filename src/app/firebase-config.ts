@@ -1,15 +1,8 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
+import { environment } from './environments/environment';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyC4JfSM0oOpdd3SuZ9U-ZjdbAkm5JJNBd4',
-  authDomain: 'star-d-b36f2.firebaseapp.com',
-  projectId: 'star-d-b36f2',
-  storageBucket: 'star-d-b36f2.appspot.com',
-  messagingSenderId: '120310192534',
-  appId: '1:120310192534:web:68ff24744c5020f6bc25b7',
-  measurementId: 'G-CTXSFHQSCT',
-};
+const firebaseConfig = environment.firebaseConfig;
 
 let firebaseApp: FirebaseApp;
 let firebaseAuth: Auth;

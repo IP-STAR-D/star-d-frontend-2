@@ -25,6 +25,11 @@ export class ExamService {
 
   // Retrieve all exams
   getExams(): Observable<Exam[]> {
+    const url = `${this.apiUrl}/all`;
+    return this.http.get<Exam[]>(url, { headers: this.getAuthHeaders() });
+  }
+
+  getPertinentExams(): Observable<Exam[]> {
     return this.http.get<Exam[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 

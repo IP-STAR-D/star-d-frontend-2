@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: process.env.API_URL || 'http://localhost:8081',
   firebaseConfig: {
     apiKey: process.env.FIREBASE_API_KEY || 'default-api-key',
