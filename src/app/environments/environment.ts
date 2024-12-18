@@ -1,13 +1,13 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8081',
+  production: true,
+  apiUrl: 'https://star-d-backend.onrender.com',
   firebaseConfig: {
-    apiKey: process.env['FIREBASE_API_KEY'],
-    authDomain: process.env['FIREBASE_AUTH_DOMAIN'],
-    projectId: process.env['FIREBASE_PROJECT_ID'],
-    storageBucket: process.env['FIREBASE_STORAGE_BUCKET'],
-    messagingSenderId: process.env['FIREBASE_MESSAGING_SENDER_ID'],
-    appId: process.env['FIREBASE_APP_ID'],
-    measurementId: process.env['FIREBASE_MEASUREMENT_ID'],
+    apiKey: 'AIzaSyC4JfSM0oOpdd3SuZ9U-ZjdbAkm5JJNBd4',
+    authDomain: 'star-d-b36f2.firebaseapp.com',
+    projectId: 'star-d-b36f2',
+    storageBucket: 'star-d-b36f2.appspot.com',
+    messagingSenderId: '120310192534',
+    appId: '1:120310192534:web:68ff24744c5020f6bc25b7',
+    measurementId: 'G-CTXSFHQSCT',
   },
 };
