@@ -2,6 +2,7 @@ export class Exam {
   examId: number;
   professorId: number;
   class_name: string;
+  shortName: string;
   degreeId: number;
   semester: number;
   user: { email: string; firstName: string; lastName: string };
@@ -12,6 +13,7 @@ export class Exam {
     examId: number,
     professorId: number,
     class_name: string,
+    shortName: string,
     degreeId: number,
     semester: number,
     user: { email: string; firstName: string; lastName: string },
@@ -21,6 +23,7 @@ export class Exam {
     this.examId = examId;
     this.professorId = professorId;
     this.class_name = class_name;
+    this.shortName = shortName;
     this.degreeId = degreeId;
     this.semester = semester;
     this.year = year;

@@ -35,7 +35,7 @@
     >
       <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
         <h4 class="truncate w-full">
-          {{ getExam(appointment.examId)?.class_name }}
+          {{ getExam(appointment.examId)?.shortName + ' ' + getGroup(appointment.groupId)?.groupName + ' - ' + (appointment.startTime | date : "dd.MM.yyyy")}}
         </h4>
       </mat-card-header>
       <mat-card-content>
