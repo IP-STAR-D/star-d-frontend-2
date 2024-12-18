@@ -1,8 +1,8 @@
-<button 
-  (click)="toggleVisibility()" 
+<button
+  (click)="toggleVisibility()"
   class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
 >
-  {{ isVisible ? 'Afișează programări' : 'Afișează examene' }}
+  {{ isVisible ? "Afișează programări" : "Afișează examene" }}
 </button>
 
 <main *ngIf="isVisible">
@@ -23,11 +23,17 @@
     </select>
   </div>
 
-  <div *ngIf="filteredExams.length > 0; else noExams" class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center">
-    <div *ngFor="let exam of filteredExams" class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out">
+  <div
+    *ngIf="filteredExams.length > 0; else noExams"
+    class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center"
+  >
+    <div
+      *ngFor="let exam of filteredExams"
+      class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+    >
       <mat-card class="w-full" (click)="redirectToExam(exam.examId)">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
-          <h4 class="truncate w-full">{{ exam.class_name }}</h4>
+          <h6 class="truncate w-full">{{ exam.class_name }}</h6>
         </mat-card-header>
         <mat-card-content>
           <!-- Detaliile examenului -->
@@ -42,8 +48,14 @@
 </main>
 
 <main *ngIf="!isVisible">
-  <div *ngIf="appointments.length > 0; else noAppointments" class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center">
-    <div *ngFor="let appointment of appointments" class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out">
+  <div
+    *ngIf="appointments.length > 0; else noAppointments"
+    class="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-8 justify-center"
+  >
+    <div
+      *ngFor="let appointment of appointments"
+      class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+    >
       <mat-card class="w-full">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
           <h4 class="truncate w-full">{{ appointment.appointmentId }}</h4>
