@@ -1,128 +1,156 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { Appointment } from '../../models/appointment.model';
+import { FormsModule } from '@angular/forms';
+
 import { Exam } from '../../models/exam.model';
-import { AppointmentModal } from '../modal/modal.component';
+import { Appointment } from '../../models/appointment.model';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
 import { StatusTranslationService } from '../../services/translation.service';
-import { AuthService } from '../../services/auth.service';
-import { FormsModule } from '@angular/forms';
+import { SnackBarService } from '../../services/snack-bar.service';
+import { ClassroomService } from '../../services/classroom.service';
+import { MatCardModule } from '@angular/material/card';
+import { Classroom } from '../../models/classroom.model';
+import { User } from '../../models/user.model';
+import { ProfessorService } from '../../services/professor.service';
+import { StudentService } from '../../services/student.service';
+import { UserService } from '../../services/user.service';
+import { Professor } from '../../models/professor.model';
 
 @Component({
   selector: 'app-admin',
+  standalone: true,
+  imports: [FormsModule, CommonModule, MatCardModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
-  standalone: true,
-  imports: [FormsModule, CommonModule],
 })
 export class AdminComponent implements OnInit {
-  appointments: Appointment[] = [];
-  filteredAppointments: Appointment[] = [];
   exams: Exam[] = [];
+  appointments: Appointment[] = [];
+  professors: Professor[] = [];
+  classrooms: Classroom[] = [];
+
+  filteredExams: Exam[] = [];
   statusFilter: string = '';
-  examFilter: string = '';
 
   constructor(
     private router: Router,
-    private dialog: MatDialog,
     private examService: ExamService,
     private appointmentService: AppointmentsService,
+    private professorService: ProfessorService,
+    private userService: UserService,
     private statusTranslationService: StatusTranslationService,
-    private authService: AuthService
+    private snackBarService: SnackBarService,
+    private studentService: StudentService,
+    private classroomService: ClassroomService
   ) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
     this.loadExams();
-  }
-
-  openDialog(appointment: Appointment): void {
-    const dialogRef = this.dialog.open(AppointmentModal, {
-      data: { appointment, exam: this.getExam(appointment.examId) },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.updateStatus(appointment, result.status);
-      }
-    });
-  }
-
-  loadAppointments(): void {
-    this.appointmentService.getAppointments().subscribe({
-      next: (data: any[]) => {
-        this.appointments = data.map(
-          (item) =>
-            new Appointment(
-              item.appointmentId,
-              item.examId,
-              item.groupId,
-              item.status,
-              new Date(item.startTime),
-              new Date(item.endTime),
-              item.classroomId
-            )
-        );
-        this.filteredAppointments = [...this.appointments];
-      },
-      error: (err) => {
-        console.error('Eroare la preluarea programarilor:', err);
-      },
-    });
+    this.loadAppointments();
+    this.loadClassrooms();
   }
 
   loadExams(): void {
     this.examService.getExams().subscribe({
       next: (data: Exam[]) => {
         this.exams = data;
+        this.applyFilters();
       },
       error: (err) => {
-        console.error('Eroare la preluarea examenelor:', err);
+        this.snackBarService.show('Eroare la preluarea examenelor!', 'error');
       },
     });
   }
 
-  getExam(examId: number): Exam | null {
-    return this.exams.find((exam) => exam.examId === examId) || null;
+  loadAppointments(): void {
+    this.appointmentService.getAppointments().subscribe({
+      next: (data: Appointment[]) => {
+        this.appointments = data;
+        this.applyFilters();
+      },
+      error: (err) => {
+        this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
+      },
+    });
+  }
+
+  loadClassrooms(): void {
+    this.classroomService.getClassrooms().subscribe({
+      next: (data: Classroom[]) => {
+        this.classrooms = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea salilor:', err);
+        this.snackBarService.show('Eroare la preluarea salilor!', 'error');
+      },
+    });
+  }
+
+  getUserForProfessor(userId: number): User | null {
+    let user: User | null = null;
+    this.userService.getUserById(userId).subscribe({
+      next: (data: User) => {
+        user = data;
+      },
+      error: (err) => {
+        this.snackBarService.show('Eroare la preluarea utilizatorului!', 'error');
+      },
+    });
+    return user;
   }
 
   applyFilters(): void {
-    this.filteredAppointments = this.appointments.filter((appointment) => {
-      const matchesStatus =
-        this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
-      const matchesExam = this.examFilter === '' || appointment.examId === Number(this.examFilter);
-      return matchesStatus && matchesExam;
+    this.filteredExams = this.exams.filter((exam) => {
+      const appointment = this.getAppointmentsForExam(exam.examId);
+      const matchesStatus = this.statusFilter
+        ? appointment && appointment.status.toLowerCase() === this.statusFilter
+        : true;
+      return matchesStatus;
     });
   }
 
-  onStatusFilterChange(event: Event): void {
-    const status = (event.target as HTMLSelectElement).value;
-    this.statusFilter = status;
-    this.applyFilters();
+  getAppointmentsForExam(examId: number): Appointment | null {
+    const priorityStatuses = ['scheduled', 'pending', 'rejected'];
+
+    for (const status of priorityStatuses) {
+      const filteredAppointments = this.appointments.filter(
+        (appointment) => appointment.examId === examId && appointment.status.toLowerCase() === status
+      );
+      if (filteredAppointments.length > 0) {
+        return filteredAppointments[0];
+      }
+    }
+
+    return null;
   }
 
-  onExamFilterChange(event: Event): void {
-    const examId = (event.target as HTMLSelectElement).value;
-    this.examFilter = examId;
-    this.applyFilters();
+  getClassroomName(classroomId: number): string {
+    const classroom = this.classrooms.find((classroom) => classroom.classroomId === classroomId);
+    return classroom ? classroom.classroomName : '';
   }
 
   getStatusTranslation(status: string): string {
     return this.statusTranslationService.getStatusTranslation(status);
   }
 
-  updateStatus(appointment: Appointment, status: string): void {
-    appointment.status = status;
-    this.appointmentService.updateAppointment(appointment.appointmentId, appointment).subscribe(
-      (updatedAppointment) => {
-        console.log('Appointment updated:', updatedAppointment);
+  getTypeTranslation(type: string): string {
+    return this.statusTranslationService.getTypeTranslation(type);
+  }
+
+  redirectToExam(examId: number): void {
+    this.studentService.isStudentBoss().subscribe({
+      next: (response) => {
+        if (response.isBoss) {
+          this.router.navigate([`student/exams/${examId}`]);
+        } else {
+          this.snackBarService.show('Doar sefii de grupa pot accesa aceasta pagina!', 'error');
+        }
       },
-      (error) => {
-        console.error('Error updating appointment:', error);
-      }
-    );
+      error: () => {
+        this.snackBarService.show('Eroare la verificarea permisiunilor!', 'error');
+      },
+    });
   }
 }
