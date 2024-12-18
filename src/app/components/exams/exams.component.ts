@@ -19,11 +19,24 @@ import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { StudentService } from '../../services/student.service';
 import { ClassroomService } from '../../services/classroom.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-exams',
   standalone: true,
-  imports: [CommonModule, MatGridListModule, MatCardModule, FormsModule],
+  imports: [
+    CommonModule,
+    MatGridListModule,
+    MatCardModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   templateUrl: './exams.component.html',
   styleUrl: './exams.component.css',
 })
@@ -35,6 +48,7 @@ export class ExamsComponent implements OnInit {
 
   filteredExams: Exam[] = [];
   statusFilter: string = '';
+  dateFilter: string | null = null; // Format ISO: 'YYYY-MM-DD'
 
   constructor(
     private router: Router,
@@ -103,16 +117,6 @@ export class ExamsComponent implements OnInit {
     return user;
   }
 
-  applyFilters(): void {
-    this.filteredExams = this.exams.filter((exam) => {
-      const appointment = this.getAppointmentsForExam(exam.examId);
-      const matchesStatus = this.statusFilter
-        ? appointment && appointment.status.toLowerCase() === this.statusFilter
-        : true;
-      return matchesStatus;
-    });
-  }
-
   getAppointmentsForExam(examId: number): Appointment | null {
     const priorityStatuses = ['scheduled', 'pending', 'rejected'];
 
@@ -155,4 +159,24 @@ export class ExamsComponent implements OnInit {
       },
     });
   }
+
+  applyFilters(): void {
+    this.filteredExams = this.exams.filter((exam) => {
+      const appointment = this.getAppointmentsForExam(exam.examId);
+  
+      // Filtrare după status
+      const matchesStatus = this.statusFilter
+        ? appointment && appointment.status.toLowerCase() === this.statusFilter
+        : true;
+  
+      // Filtrare după dată
+      const matchesDate = this.dateFilter
+        ? appointment &&
+          new Date(appointment.startTime).toISOString().split('T')[0] === this.dateFilter
+        : true;
+  
+      return matchesStatus && matchesDate;
+    });
+  }
+  
 }
