@@ -78,7 +78,6 @@ export class AdminComponent implements OnInit {
       },
     });
   }
-  
 
   loadAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
@@ -162,5 +161,6 @@ export class AdminComponent implements OnInit {
 
   toggleVisibility() {
     this.isVisible = !this.isVisible;
+    this.applyFilters(); // Reaplică filtrele după schimbarea vizibilității
   }
 }
