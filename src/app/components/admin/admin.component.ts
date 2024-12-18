@@ -33,6 +33,8 @@ export class AdminComponent implements OnInit {
 
   filteredExams: Exam[] = [];
   statusFilter: string = '';
+  classFilter: string = ''; // Variabila pentru grupă
+  isVisible: boolean = true;
 
   constructor(
     private router: Router,
@@ -49,7 +51,20 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     this.loadExams();
     this.loadAppointments();
-    this.loadClassrooms();
+    this.loadClassrooms(); // Asigură-te că grupele sunt încărcate
+  }
+
+  applyFilters(): void {
+    this.filteredExams = this.exams.filter((exam) => {
+      const appointment = this.getAppointmentsForExam(exam.examId);
+      const matchesStatus = this.statusFilter
+        ? appointment && appointment.status.toLowerCase() === this.statusFilter
+        : true;
+      const matchesClass = this.classFilter
+        ? appointment && appointment.classroomId === Number(this.classFilter)
+        : true;
+      return matchesStatus && matchesClass;
+    });
   }
 
   loadExams(): void {
@@ -63,6 +78,7 @@ export class AdminComponent implements OnInit {
       },
     });
   }
+  
 
   loadAppointments(): void {
     this.appointmentService.getAppointments().subscribe({
@@ -99,16 +115,6 @@ export class AdminComponent implements OnInit {
       },
     });
     return user;
-  }
-
-  applyFilters(): void {
-    this.filteredExams = this.exams.filter((exam) => {
-      const appointment = this.getAppointmentsForExam(exam.examId);
-      const matchesStatus = this.statusFilter
-        ? appointment && appointment.status.toLowerCase() === this.statusFilter
-        : true;
-      return matchesStatus;
-    });
   }
 
   getAppointmentsForExam(examId: number): Appointment | null {
@@ -152,5 +158,9 @@ export class AdminComponent implements OnInit {
         this.snackBarService.show('Eroare la verificarea permisiunilor!', 'error');
       },
     });
+  }
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
   }
 }
