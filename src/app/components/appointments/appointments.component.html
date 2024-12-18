@@ -13,13 +13,13 @@
     <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.class_name }}</option>
   </select>
 
-  <!-- Filtru pentru dată -->
-  <mat-form-field appearance="outline" class="w-64">
-    <mat-label>Data examenului</mat-label>
-    <input matInput [matDatepicker]="picker" (dateChange)="onDateFilterChange($event.value?.toISOString()?.split('T')[0])" />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
+  <!-- Filter for date -->
+  <input
+  type="date"
+  class="border rounded p-2"
+  [(ngModel)]="dateFilter"
+  (change)="applyFilters()"
+/>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -35,7 +35,7 @@
     >
       <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
         <h4 class="truncate w-full">
-          {{ getExam(appointment.examId)?.shortName + ' ' + getGroup(appointment.groupId)?.groupName + ' - ' + (appointment.startTime | date : "dd.MM.yyyy")}}
+          {{ getExam(appointment.examId)?.shortName + ' ' + getGroup(appointment.groupId)?.groupName}}
         </h4>
       </mat-card-header>
       <mat-card-content>
@@ -53,7 +53,7 @@
       </mat-card-content>
       <mat-card-content>
         <span>Data: </span>
-        <span>{{appointment.startTime.getMonth()}}.{{appointment.startTime.getFullYear()}}</span>
+        <span>{{appointment.startTime | date : "dd.MM.yyyy"}}</span>
       </mat-card-content>
     </mat-card>
     <div
