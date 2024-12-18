@@ -11,9 +11,11 @@ import { MatInputModule } from '@angular/material/input';
 import { Appointment } from '../../models/appointment.model';
 import { User } from '../../models/user.model';
 import { Exam } from '../../models/exam.model';
+import { Group } from '../../models/group.model';
 import { AppointmentModal } from '../modal/modal.component';
 import { ExamService } from '../../services/exam.service';
 import { AppointmentsService } from '../../services/appointment.service';
+import { GroupService } from '../../services/group.service';
 import { AuthService } from '../../services/auth.service';
 import { StatusTranslationService } from '../../services/translation.service';
 import { FormsModule } from '@angular/forms';
@@ -40,6 +42,7 @@ export class AppointmentsComponent implements OnInit {
   filteredAppointments: Appointment[] = [];
   users: User[] = [];
   exams: Exam[] = [];
+  groups: Group[] = [];
   professorId: number | null = null;
   showTooltip = false;
   tooltipX = 0;
@@ -56,12 +59,14 @@ export class AppointmentsComponent implements OnInit {
     private appointmentService: AppointmentsService,
     private statusTranslationService: StatusTranslationService,
     private authService: AuthService,
-    private snackBarService: SnackBarService
-  ) {}
+    private snackBarService: SnackBarService,
+    private groupService: GroupService
+  ) { }
 
   ngOnInit(): void {
     this.loadMyAppointments();
     this.loadExamsByProfessor();
+    this.loadGroupsByProfessor();
   }
 
   openDialog(appointment: Appointment): void {
@@ -94,8 +99,30 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
+  loadGroupsByProfessor(): void {
+    this.professorId = Number(this.authService.getUserId());
+
+    if (!this.professorId) {
+      this.snackBarService.show('Profesorul are ID invalid!', 'error');
+      return;
+    }
+
+    this.groupService.getGroupsByProfessorId(this.professorId).subscribe({
+      next: (data: Group[]) => {
+        this.groups = data;
+      },
+      error: () => {
+        this.snackBarService.show('Eroare preluarea exemenelor!', 'error');
+      },
+    });
+  }
+
   getExam(examId: number): Exam | null {
     return this.exams.find((exam) => exam.examId === examId) || null;
+  }
+
+  getGroup(groupId: number): Group | null {
+    return this.groups.find((group) => group.groupId === groupId) || null;
   }
 
   applyFilters(): void {
@@ -177,4 +204,5 @@ export class AppointmentsComponent implements OnInit {
   getStatusTranslation(status: string): string {
     return this.statusTranslationService.getStatusTranslation(status);
   }
+
 }
