@@ -17,7 +17,7 @@ export class ClassroomService {
     let headers = new HttpHeaders();
 
     if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
+      headers = headers.set('Authorization', token);
     }
 
     return headers;
