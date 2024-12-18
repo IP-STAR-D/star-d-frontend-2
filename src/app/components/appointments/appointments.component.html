@@ -10,11 +10,16 @@
   <!-- Filtru pentru materie -->
   <select class="border rounded p-2" [(ngModel)]="examFilter" (change)="onExamFilterChange($event)">
     <option [value]="''">Toate materiile</option>
-    <!-- Folosim șir gol pentru a reprezenta "Toate materiile" -->
-    <option *ngFor="let exam of exams" [value]="exam.examId">
-      {{ exam.class_name }}
-    </option>
+    <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.class_name }}</option>
   </select>
+
+  <!-- Filtru pentru dată -->
+  <mat-form-field appearance="outline" class="w-64">
+    <mat-label>Data examenului</mat-label>
+    <input matInput [matDatepicker]="picker" (dateChange)="onDateFilterChange($event.value?.toISOString()?.split('T')[0])" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -45,6 +50,10 @@
         >
           {{ getStatusTranslation(appointment.status).toUpperCase() }}
         </span>
+      </mat-card-content>
+      <mat-card-content>
+        <span>Data: </span>
+        <span>{{appointment.startTime.getMonth()}}.{{appointment.startTime.getFullYear()}}</span>
       </mat-card-content>
     </mat-card>
     <div

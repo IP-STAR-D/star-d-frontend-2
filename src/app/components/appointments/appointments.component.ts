@@ -4,6 +4,10 @@ import { Router } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Appointment } from '../../models/appointment.model';
 import { User } from '../../models/user.model';
 import { Exam } from '../../models/exam.model';
@@ -16,9 +20,18 @@ import { FormsModule } from '@angular/forms';
 import { SnackBarService } from '../../services/snack-bar.service';
 
 @Component({
-  selector: 'app-exams',
+  selector: 'app-appointments',
   standalone: true,
-  imports: [CommonModule, MatGridListModule, MatCardModule, FormsModule],
+  imports: [
+    CommonModule,
+    MatGridListModule,
+    MatCardModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
 })
@@ -33,7 +46,8 @@ export class AppointmentsComponent implements OnInit {
   tooltipY = 0;
 
   statusFilter: string = ''; // Filtrul pentru status
-  examFilter: string = ''; // Inițializat la șir gol
+  examFilter: string = ''; // Filtrul pentru materie
+  dateFilter: string | null = null; // Filtrul pentru dată (format ISO: 'YYYY-MM-DD')
 
   constructor(
     private router: Router,
@@ -57,7 +71,6 @@ export class AppointmentsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Dialog result:', result);
         this.updateStatus(appointment, result.status);
       }
     });
@@ -73,46 +86,45 @@ export class AppointmentsComponent implements OnInit {
 
     this.examService.getExamsByProfessorId(this.professorId).subscribe({
       next: (data: Exam[]) => {
-        this.exams = data; // Salvează datele primite de la API în variabila exams
+        this.exams = data;
       },
-      error: (err) => {
+      error: () => {
         this.snackBarService.show('Eroare preluarea exemenelor!', 'error');
       },
     });
   }
 
   getExam(examId: number): Exam | null {
-    const exam = this.exams.find((exam) => exam.examId === examId);
-    return exam ? exam : null;
+    return this.exams.find((exam) => exam.examId === examId) || null;
   }
 
   applyFilters(): void {
-    //console.log("Applying filters:", this.statusFilter, this.examFilter);  // Debugging
-
     this.filteredAppointments = this.appointments.filter((appointment) => {
       const matchesStatus =
         this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
 
-      // Modificare: Verificăm dacă `examFilter` este gol
       const matchesExam = this.examFilter === '' || appointment.examId === Number(this.examFilter);
 
-      //console.log("Appointment matches: ", appointment, matchesStatus, matchesExam);  // Debugging
+      const matchesDate = this.dateFilter
+        ? new Date(appointment.startTime).toISOString().split('T')[0] === this.dateFilter
+        : true;
 
-      return matchesStatus && matchesExam;
+      return matchesStatus && matchesExam && matchesDate;
     });
-
-    //console.log("Filtered appointments:", this.filteredAppointments);  // Debugging
   }
 
   onStatusFilterChange(event: Event): void {
-    const status = (event.target as HTMLSelectElement).value;
-    this.statusFilter = status;
+    this.statusFilter = (event.target as HTMLSelectElement).value;
     this.applyFilters();
   }
 
   onExamFilterChange(event: Event): void {
-    const examId = (event.target as HTMLSelectElement).value;
-    this.examFilter = examId;
+    this.examFilter = (event.target as HTMLSelectElement).value;
+    this.applyFilters();
+  }
+
+  onDateFilterChange(event: string | null): void {
+    this.dateFilter = event;
     this.applyFilters();
   }
 
@@ -131,21 +143,17 @@ export class AppointmentsComponent implements OnInit {
               item.classroom_id
             )
         );
-        this.filteredAppointments = [...this.appointments]; // Inițial, toate programările sunt vizibile
+        this.filteredAppointments = [...this.appointments];
       },
-      error: (err) => {
+      error: () => {
         this.snackBarService.show('Eroare preluarea exmenelor', 'error');
       },
     });
   }
 
-  getStatusTranslation(status: string): string {
-    return this.statusTranslationService.getStatusTranslation(status);
-  }
-
   onMouseMove(event: MouseEvent) {
     this.showTooltip = true;
-    this.tooltipX = event.clientX + 10; // Ajustează poziția față de cursor
+    this.tooltipX = event.clientX + 10;
     this.tooltipY = event.clientY + 10;
   }
 
@@ -157,12 +165,16 @@ export class AppointmentsComponent implements OnInit {
     appointment.status = status;
 
     this.appointmentService.updateAppointment(appointment.appointmentId, appointment).subscribe(
-      (updatedAppointment) => {
-        this.snackBarService.show('Am modififcat cererea!', 'success');
+      () => {
+        this.snackBarService.show('Am modificat cererea!', 'success');
       },
-      (error) => {
-        this.snackBarService.show('nu am modificat cererea!', 'error');
+      () => {
+        this.snackBarService.show('Nu am modificat cererea!', 'error');
       }
     );
+  }
+
+  getStatusTranslation(status: string): string {
+    return this.statusTranslationService.getStatusTranslation(status);
   }
 }
