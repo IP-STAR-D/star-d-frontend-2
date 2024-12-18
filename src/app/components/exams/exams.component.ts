@@ -69,7 +69,7 @@ export class ExamsComponent implements OnInit {
   }
 
   loadExams(): void {
-    this.examService.getExams().subscribe({
+    this.examService.getPertinentExams().subscribe({
       next: (data: Exam[]) => {
         this.exams = data;
         this.applyFilters();
