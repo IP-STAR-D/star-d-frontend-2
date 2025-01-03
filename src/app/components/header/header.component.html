@@ -1,16 +1,62 @@
 <header
   class="bg-gradient-to-r from-primary-dark to-primary-darker text-white flex items-center justify-between h-24 px-4 py-2 relative"
 >
-  <div class="flex-1 flex justify-start"></div>
+  <div class="flex-grow flex justify-start">
+    <div *ngIf="userInfo && isNotLogin">
+      <div *ngIf="role === 'student'">
+        <div>
+          <span class="text-lg font-light text-gray-200"> Student: </span>
+          <span class="text-xl font-semibold"> {{ userInfo.user.firstName }} {{ userInfo.user.lastName }} </span>
+        </div>
+        <div class="flex flex-row items-center max-xl:gap-2 gap-4">
+          <div title="{{ userInfo.group?.groupName }}">
+            <span class="max-lg:hidden font-light text-gray-200"> Grupa: </span>
+            <span class="text-lg font-semibold"> {{ userInfo.group?.groupName }} </span>
+          </div>
 
-  <div class="absolute inset-x-0 top-0 flex justify-center pointer-events-none shadow-md">
+          <div class="lg:hidden w-[2px] h-[18px] rounded bg-gray-400"></div>
+
+          <div class="flex flex-row items-center gap-1" title="{{ userInfo.degree?.degreeName }}">
+            <span class="max-lg:hidden font-light text-gray-200"> Specializare: </span>
+            <span class="text-lg font-semibold">{{ userInfo.degree?.shortName }} </span>
+          </div>
+
+          <div title="{{ userInfo.faculty?.facultyName }}">
+            <span class="max-lg:hidden font-light text-gray-200"> Facultate: </span>
+            <span class="text-lg font-semibold"> {{ userInfo.faculty?.shortName }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="role === 'professor'" class="font-medium">
+        <div>
+          <span class="text-lg font-light text-gray-200"> Profesor: </span>
+          <span class="text-xl font-semibold"> {{ userInfo.user.firstName }} {{ userInfo.user.lastName }} </span>
+        </div>
+
+        <div title="{{ userInfo.faculty?.facultyName }}">
+          <span class="font-light text-gray-200"> Facultate: </span>
+          <span class="text-lg font-semibold"> {{ userInfo.faculty?.shortName }} </span>
+        </div>
+      </div>
+
+      <div *ngIf="role === 'admin'" class="font-medium">
+        <div>
+          <span class="text-lg font-light text-gray-200"> Admin: </span>
+          <span class="text-xl font-semibold"> {{ userInfo.user.firstName }} {{ userInfo.user.lastName }} </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-sm:hidden absolute inset-x-0 top-0 flex justify-center pointer-events-none shadow-md">
     <img src="https://usv.ro/wp-content/uploads/2020/05/Sigla-USV-scroll.png" alt="USV Logo" class="h-32 -mb-8" />
   </div>
 
   <div class="flex-1 flex justify-end">
     <button
-      class="text-white hover:text-gray-400 font-semibold py-2 px-4 rounded"
-      *ngIf="logoutButton"
+      class="text-white hover:text-gray-400 text-lg font-semibold py-2 px-4 rounded"
+      *ngIf="isNotLogin"
       (click)="logout()"
     >
       Logout
