@@ -82,6 +82,8 @@ export class ExamComponent {
   minDate: Date = new Date();
   maxDate: Date = new Date();
 
+  formDisabled = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -194,6 +196,40 @@ export class ExamComponent {
     this.appointmentService.getAppointments().subscribe({
       next: (data: Appointment[]) => {
         this.myAppointments = data;
+
+        this.myAppointments.sort((a, b) => {
+          const statusOrder = ['scheduled', 'pending', 'canceled', 'rejected'];
+          const statusComparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+          if (statusComparison !== 0) {
+            return statusComparison;
+          }
+          return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+        });
+
+        const activeAppointment = this.myAppointments.find(
+          (appointment) =>
+            (appointment.status === 'pending' || appointment.status === 'scheduled') && appointment.examId === this.id
+        );
+
+        if (activeAppointment) {
+          this.setFormDisabledState(true);
+
+          const startTime = new Date(activeAppointment.startTime);
+          const endTime = new Date(activeAppointment.endTime);
+
+          this.selectedDate = startTime.toLocaleDateString('en-CA');
+          this.selectedTimeStart = startTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+          this.selectedTimeEnd = endTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+          this.classroomId = activeAppointment.classroomId;
+        }
       },
       error: (err) => {
         this.snackBarService.show('Eroare la preluarea programarilor!', 'error');
@@ -288,6 +324,22 @@ export class ExamComponent {
     this.classroomId = newValue;
     this.timeStartFormControl.updateValueAndValidity();
     this.timeEndFormControl.updateValueAndValidity();
+  }
+
+  setFormDisabledState(isDisabled: boolean) {
+    if (isDisabled) {
+      this.formDisabled = true;
+      this.dateFormControl.disable();
+      this.timeStartFormControl.disable();
+      this.timeEndFormControl.disable();
+      this.classroomFormControl.disable();
+    } else {
+      this.formDisabled = false;
+      this.dateFormControl.enable();
+      this.timeStartFormControl.enable();
+      this.timeEndFormControl.enable();
+      this.classroomFormControl.enable();
+    }
   }
 
   getAppointmentsForExam(): Appointment[] {

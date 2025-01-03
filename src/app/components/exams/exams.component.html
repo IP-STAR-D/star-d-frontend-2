@@ -8,14 +8,9 @@
       <option value="pending">În așteptare</option>
       <option value="rejected">Respins</option>
     </select>
-  
+
     <!-- Filter for date -->
-    <input
-      type="date"
-      class="border rounded p-2"
-      [(ngModel)]="dateFilter"
-      (change)="applyFilters()"
-    />
+    <input type="date" class="border rounded p-2" [(ngModel)]="dateFilter" (change)="applyFilters()" />
   </div>
 
   <div
@@ -26,9 +21,9 @@
       *ngFor="let exam of filteredExams"
       class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
     >
-      <mat-card class="w-full" (click)="redirectToExam(exam.examId)">
+      <mat-card class="w-full" (click)="redirectToExam(exam.examId)" title="Click pentru mai multe detalii">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
-          <h4 class="truncate w-full">{{ exam.class_name }}</h4>
+          <h6 class="truncate w-full">{{ exam.class_name }}</h6>
         </mat-card-header>
         <mat-card-content>
           <div class="h-24 p-4 mb-4">
