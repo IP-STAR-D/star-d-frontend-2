@@ -21,7 +21,7 @@
       *ngFor="let exam of filteredExams"
       class="cursor-pointer hover:bg-gray-200 transition-colors duration-300 ease-in-out"
     >
-      <mat-card class="w-full" (click)="redirectToExam(exam.examId)">
+      <mat-card class="w-full" (click)="redirectToExam(exam.examId)" title="Click pentru mai multe detalii">
         <mat-card-header class="bg-gradient-to-r from-primary-dark to-primary-darker rounded-lg shadow-md text-white">
           <h6 class="truncate w-full">{{ exam.class_name }}</h6>
         </mat-card-header>
