@@ -197,6 +197,15 @@ export class ExamComponent {
       next: (data: Appointment[]) => {
         this.myAppointments = data;
 
+        this.myAppointments.sort((a, b) => {
+          const statusOrder = ['scheduled', 'pending', 'canceled', 'rejected'];
+          const statusComparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+          if (statusComparison !== 0) {
+            return statusComparison;
+          }
+          return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+        });
+
         const activeAppointment = this.myAppointments.find(
           (appointment) =>
             (appointment.status === 'pending' || appointment.status === 'scheduled') && appointment.examId === this.id
