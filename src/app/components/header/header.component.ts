@@ -19,6 +19,7 @@ export class HeaderComponent {
   isNotLogin: boolean = true;
   userInfo: UserResponse | undefined;
   role: UserRole | undefined;
+  gettingUserData: boolean = false;
 
   constructor(
     private router: Router,
@@ -30,7 +31,7 @@ export class HeaderComponent {
   ngOnInit(): void {
     this.router.events.subscribe(() => {
       this.isNotLogin = this.router.url !== '/login';
-      if (this.authService.getToken()) {
+      if (this.authService.getToken() && !this.gettingUserData) {
         this.loadUserData();
       }
     });
@@ -42,6 +43,7 @@ export class HeaderComponent {
   }
 
   loadUserData(): void {
+    this.gettingUserData = true;
     this.userService.getUserData().subscribe({
       next: (data: UserResponse) => {
         this.userInfo = data;
@@ -52,8 +54,6 @@ export class HeaderComponent {
         } else if (data.professor) {
           this.role = 'professor';
         }
-
-        console.log('Datele utilizatorului:', this.userInfo);
       },
       error: (err) => {
         console.error('Eroare la preluarea datelor utilizatorului:', err);
