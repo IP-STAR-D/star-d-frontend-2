@@ -1,3 +1,18 @@
-<footer class="bg-gradient-to-r from-primary-dark to-primary-darker text-white text-center py-4 mt-auto">
-  <p>&#169; 2024 STAR-D. Toate drepturile rezervate.</p>
+<footer
+  class="flex flex-row items-center justify-between bg-gradient-to-r from-primary-dark to-primary-darker text-white text-center p-4 mt-auto"
+>
+  <div *ngIf="semesterInfo && isNotLogin" class="flex-1 flex flex-row items-center justify-start max-xl:gap-2 gap-4">
+    <div>
+      <span class="font-light text-gray-200"> An: </span>
+      <span class="text-lg font-semibold"> {{ semesterInfo.year }} </span>
+    </div>
+
+    <div>
+      <span class="font-light text-gray-200"> Semestru: </span>
+      <span class="text-lg font-semibold"> {{ semesterInfo.semester }} </span>
+    </div>
+  </div>
+  <span class="flex-1 flex flex-row items-center justify-end text-sm font-light text-gray-200">
+    &#169; {{ getCurrentYear() }} STAR-D. Toate drepturile rezervate.
+  </span>
 </footer>

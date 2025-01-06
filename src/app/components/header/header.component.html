@@ -1,14 +1,14 @@
 <header
   class="bg-gradient-to-r from-primary-dark to-primary-darker text-white flex items-center justify-between h-24 px-4 py-2 relative"
 >
-  <div class="flex-grow flex justify-start">
+  <div class="flex-1 flex justify-start">
     <div *ngIf="userInfo && isNotLogin">
       <div *ngIf="role === 'student'">
         <div>
           <span class="text-lg font-light text-gray-200"> Student: </span>
           <span class="text-xl font-semibold"> {{ userInfo.user.firstName }} {{ userInfo.user.lastName }} </span>
         </div>
-        <div class="flex flex-row items-center max-xl:gap-2 gap-4">
+        <div class="flex flex-row items-center max-lg:gap-2 gap-4">
           <div title="{{ userInfo.group?.groupName }}">
             <span class="max-lg:hidden font-light text-gray-200"> Grupa: </span>
             <span class="text-lg font-semibold"> {{ userInfo.group?.groupName }} </span>
