@@ -18,7 +18,6 @@ import { Semester } from '../../models/semester.model';
 export class FooterComponent {
   isNotLogin: boolean = true;
   semesterInfo: Semester | undefined;
-
   gettingSemesterData: boolean = false;
 
   constructor(
@@ -31,6 +30,11 @@ export class FooterComponent {
   ngOnInit(): void {
     this.router.events.subscribe(() => {
       this.isNotLogin = this.router.url !== '/login';
+
+      if (this.router.url === '/login') {
+        this.semesterInfo = undefined;
+      }
+
       if (this.authService.getToken() && !this.gettingSemesterData) {
         this.loadCurrentSemester();
       }
@@ -38,7 +42,6 @@ export class FooterComponent {
   }
 
   loadCurrentSemester(): void {
-    this.semesterInfo = undefined;
     this.gettingSemesterData = true;
     this.semesterService.getCurrentSemester().subscribe({
       next: (data: Semester) => {

@@ -33,6 +33,11 @@ export class HeaderComponent {
   ngOnInit(): void {
     this.router.events.subscribe(() => {
       this.isNotLogin = this.router.url !== '/login';
+
+      if (this.router.url === '/login') {
+        this.userInfo = undefined;
+      }
+
       if (this.authService.getToken() && !this.gettingUserData) {
         this.loadUserData();
       }
@@ -45,7 +50,6 @@ export class HeaderComponent {
   }
 
   loadUserData(): void {
-    this.userInfo = undefined;
     this.gettingUserData = true;
     this.userService.getUserData().subscribe({
       next: (data: UserResponse) => {
