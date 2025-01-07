@@ -20,6 +20,7 @@ import { AuthService } from '../../services/auth.service';
 import { StatusTranslationService } from '../../services/translation.service';
 import { FormsModule } from '@angular/forms';
 import { SnackBarService } from '../../services/snack-bar.service';
+import { DegreeService } from '../../services/degree.service';
 
 @Component({
   selector: 'app-appointments',
@@ -51,6 +52,8 @@ export class AppointmentsComponent implements OnInit {
   statusFilter: string = ''; // Filtrul pentru status
   examFilter: string = ''; // Filtrul pentru materie
   dateFilter: string | null = null; // Filtrul pentru dată (format ISO: 'YYYY-MM-DD')
+  degreeFilter: string = ''; // Filtrul pentru degree
+degrees: any[] = []; // Lista de specializări asociate profesorului
 
   constructor(
     private router: Router,
@@ -60,14 +63,16 @@ export class AppointmentsComponent implements OnInit {
     private statusTranslationService: StatusTranslationService,
     private authService: AuthService,
     private snackBarService: SnackBarService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private degreeService: DegreeService
   ) { }
 
   ngOnInit(): void {
     this.loadMyAppointments();
     this.loadExamsByProfessor();
     this.loadGroupsByProfessor();
-  }
+    this.loadDegreesByProfessor(); // Noua metodă pentru a încărca specializările
+  }  
 
   openDialog(appointment: Appointment): void {
     const dialogRef = this.dialog.open(AppointmentModal, {
@@ -80,6 +85,31 @@ export class AppointmentsComponent implements OnInit {
       }
     });
   }
+
+  loadDegreesByProfessor(): void {
+    this.professorId = Number(this.authService.getUserId());
+  
+    if (!this.professorId) {
+      this.snackBarService.show('Profesorul are ID invalid!', 'error');
+      return;
+    }
+  
+    this.degreeService.getDegrees().subscribe({
+      next: (degrees: any[]) => {
+        // Obținem examenele filtrate pentru profesorul logat
+        const filteredExams = this.exams.filter((exam) => exam.professorId === this.professorId);
+  
+        // Extragem degreeId-urile unice din examenele filtrate
+        const degreeIds = new Set(filteredExams.map((exam) => exam.degreeId));
+  
+        // Filtrăm gradele care se potrivesc cu degreeId-urile asociate profesorului
+        this.degrees = degrees.filter((degree) => degreeIds.has(degree.degreeId));
+      },
+      error: () => {
+        this.snackBarService.show('Eroare la preluarea specializărilor!', 'error');
+      },
+    });
+  }  
 
   loadExamsByProfessor(): void {
     this.professorId = Number(this.authService.getUserId());
@@ -129,14 +159,16 @@ export class AppointmentsComponent implements OnInit {
     this.filteredAppointments = this.appointments.filter((appointment) => {
       const matchesStatus =
         this.statusFilter === '' || appointment.status.toLowerCase() === this.statusFilter.toLowerCase();
-
+  
       const matchesExam = this.examFilter === '' || appointment.examId === Number(this.examFilter);
-
+  
+      const matchesDegree = this.degreeFilter === '' || this.getExam(appointment.examId)?.degreeId === Number(this.degreeFilter);
+  
       const matchesDate = this.dateFilter
         ? new Date(appointment.startTime).toISOString().split('T')[0] === this.dateFilter
         : true;
-
-      return matchesStatus && matchesExam && matchesDate;
+  
+      return matchesStatus && matchesExam && matchesDegree && matchesDate;
     });
   }
 

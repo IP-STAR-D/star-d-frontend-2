@@ -13,9 +13,16 @@
     <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.class_name }}</option>
   </select>
 
+  <!-- Filtru pentru degree -->
+  <select class="border rounded p-2" [(ngModel)]="degreeFilter" (change)="applyFilters()">
+    <option [value]="''">Toate specializările</option>
+    <option *ngFor="let degree of degrees" [value]="degree.degreeId">{{ degree.degreeName }}</option>
+  </select>
+
   <!-- Filter for date -->
   <input type="date" class="border rounded p-2" [(ngModel)]="dateFilter" (change)="applyFilters()" />
 </div>
+
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
   <div
