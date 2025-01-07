@@ -172,7 +172,7 @@
 
       <mat-card-content class="max-h-[476px] overflow-y-auto">
         <!-- My Appointments List -->
-        <div *ngIf="myAppointments.length > 0 && id !== null; else noMyAppointments" class="pt-2">
+        <div *ngIf="getAppointmentsForExam().length > 0 && id !== null; else noMyAppointments" class="pt-2">
           <ul class="divide-y divide-gray-200">
             <li *ngFor="let appointment of getAppointmentsForExam()" class="relative py-4 font-medium text-gray-800">
               <div class="mb-2">
