@@ -23,7 +23,8 @@
     </div>
   </div>
 </div>
-<div mat-dialog-actions class="flex justify-around gap-4 mt-6">
+
+<div mat-dialog-actions class="flex justify-around gap-32 mt-7">
 
   <button
     mat-button
@@ -32,15 +33,6 @@
     class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
   >
     Acceptă
-  </button>
-
-  <button
-    mat-button
-    (click)="onPending()"
-    [disabled]="appointment.status === 'scheduled' || appointment.status === 'rejected'"
-    class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    Așteaptă
   </button>
 
   <button
