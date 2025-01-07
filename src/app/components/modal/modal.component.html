@@ -3,7 +3,7 @@
   <div class="grid grid-cols-2 gap-6 text-left bg-white p-4 rounded-lg shadow-md">
     <div class="border-l-4 border-gray-200 pl-2">
       <strong class="text-gray-700 text-sm">Disciplina</strong>
-      <span class="block text-gray-900">{{ exam.class_name }}</span>
+      <span class="block text-gray-900">{{ exam?.class_name || 'N/A' }}</span>
     </div>
     <div class="border-l-4 border-gray-200 pl-2">
       <strong class="text-gray-700 text-sm">Grupa</strong>
@@ -15,7 +15,7 @@
     </div>
     <div class="border-l-4 border-gray-200 pl-2">
       <strong class="text-gray-700 text-sm">Data</strong>
-      <span class="block text-gray-900">{{ appointment.startTime.toLocaleDateString() }}</span>
+      <span class="block text-gray-900">{{ appointment.startTime | date: 'dd MMMM yyyy' }}</span>
     </div>
     <div class="border-l-4 border-gray-200 pl-2">
       <strong class="text-gray-700 text-sm">Interval orar</strong>
@@ -24,26 +24,29 @@
   </div>
 </div>
 <div mat-dialog-actions class="flex justify-around gap-4 mt-6">
+
   <button
     mat-button
     (click)="onAccept()"
-    [disabled]="appointment.status === 'scheduled'"
+    [disabled]="appointment.status === 'scheduled' || appointment.status === 'rejected'"
     class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
   >
-    Accepta
+    Acceptă
   </button>
+
   <button
     mat-button
     (click)="onPending()"
-    [disabled]="appointment.status === 'pending'"
+    [disabled]="appointment.status === 'scheduled' || appointment.status === 'rejected'"
     class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
   >
-    Asteapta
+    Așteaptă
   </button>
+
   <button
     mat-button
     (click)="onReject()"
-    [disabled]="appointment.status === 'rejected'"
+    [disabled]="appointment.status === 'scheduled' || appointment.status === 'rejected'"
     class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
   >
     Respinge
