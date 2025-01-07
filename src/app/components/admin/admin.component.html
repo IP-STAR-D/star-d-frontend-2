@@ -8,18 +8,19 @@
 <main *ngIf="isVisible">
   <!-- Codul tău HTML pentru examene -->
   <div class="filters mb-4 flex gap-4">
-    <select class="border rounded p-2" [(ngModel)]="classFilter" (change)="applyFilters()">
-      <option value="">Toate grupele</option>
-      <option *ngFor="let classroom of classrooms" [value]="classroom.classroomId">
-        {{ classroom.classroomName }}
+    <select class="border rounded p-2" [(ngModel)]="degreeFilter" (change)="applyFilters()">
+      <option value="">Toate specializarile</option>
+      <option *ngFor="let degree of degrees" [value]="degree.degreeId">
+        {{ degree.degreeName }}
       </option>
     </select>
 
-    <select class="border rounded p-2" [(ngModel)]="statusFilter" (change)="applyFilters()">
-      <option value="">Toate statusurile</option>
-      <option value="scheduled">Programat</option>
-      <option value="pending">In asteptare</option>
-      <option value="rejected">Respins</option>
+    <select class="border rounded p-2" [(ngModel)]="yearFilter" (change)="applyFilters()">
+      <option value="">Toti anii</option>
+      <option value="1">An 1</option>
+      <option value="2">An 2</option>
+      <option value="3">An 3</option>
+      <option value="4">An 4</option>
     </select>
   </div>
 
@@ -36,7 +37,41 @@
           <h6 class="truncate w-full">{{ exam.class_name }}</h6>
         </mat-card-header>
         <mat-card-content>
-          <!-- Detaliile examenului -->
+          <div class="h-24 p-4 mb-4">
+            <div *ngIf="getAppointmentsForExam(exam.examId) as appointment; else noAppointments">
+              <div class="mb-2">
+                <span
+                  class="font-semibold text-lg mr-2"
+                  [ngClass]="{
+                    'text-green-600': appointment.status.toLowerCase() === 'scheduled',
+                    'text-yellow-600': appointment.status.toLowerCase() === 'pending',
+                    'text-red-600': appointment.status.toLowerCase() === 'rejected'
+                  }"
+                >
+                  {{ getStatusTranslation(appointment.status).toUpperCase() }}
+                </span>
+                <span class="text-gray-700">
+                  {{ appointment.startTime | date : "HH:mm" }} - {{ appointment.endTime | date : "HH:mm" }}
+                </span>
+              </div>
+
+              <span class="text-gray-800 mr-2">
+                {{ getClassroomName(appointment.classroomId) }}
+              </span>
+              <span class="text-gray-600 text-sm">
+                {{ appointment.startTime | date : "dd MMMM yyyy" }}
+              </span>
+            </div>
+
+            <ng-template #noAppointments>
+              <div class="text-gray-500 text-center pt-4">Nu exista programari pentru acest examen.</div>
+            </ng-template>
+          </div>
+
+          <p mat-card-subtitle class="!flex !justify-between !items-center">
+            {{ exam.user.firstName }} {{ exam.user.lastName }}
+            <span class="text-gray-500">{{ getTypeTranslation(exam.type).toUpperCase() }}</span>
+          </p>
         </mat-card-content>
       </mat-card>
     </div>

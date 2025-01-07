@@ -17,6 +17,10 @@ import { ProfessorService } from '../../services/professor.service';
 import { StudentService } from '../../services/student.service';
 import { UserService } from '../../services/user.service';
 import { Professor } from '../../models/professor.model';
+import { GroupService } from '../../services/group.service';
+import { Group } from '../../models/group.model';
+import { DegreeService } from '../../services/degree.service';
+import { Degree } from '../../models/degree.model';
 
 @Component({
   selector: 'app-admin',
@@ -30,10 +34,13 @@ export class AdminComponent implements OnInit {
   appointments: Appointment[] = [];
   professors: Professor[] = [];
   classrooms: Classroom[] = [];
+  groups: Group[] = [];
+  degrees: Degree[] = [];
 
   filteredExams: Exam[] = [];
-  statusFilter: string = '';
-  classFilter: string = ''; // Variabila pentru grupă
+  groupFilter: string = '';
+  degreeFilter: string = ''; 
+  yearFilter: string = '';
   isVisible: boolean = true;
 
   constructor(
@@ -45,27 +52,26 @@ export class AdminComponent implements OnInit {
     private statusTranslationService: StatusTranslationService,
     private snackBarService: SnackBarService,
     private studentService: StudentService,
-    private classroomService: ClassroomService
+    private classroomService: ClassroomService,
+    private groupService: GroupService,
+    private degreeService: DegreeService
   ) {}
 
   ngOnInit(): void {
     this.loadExams();
     this.loadAppointments();
-    this.loadClassrooms(); // Asigură-te că grupele sunt încărcate
+    this.loadGroups();
+    this.loadDegrees();
   }
 
   applyFilters(): void {
     this.filteredExams = this.exams.filter((exam) => {
-      const appointment = this.getAppointmentsForExam(exam.examId);
-      const matchesStatus = this.statusFilter
-        ? appointment && appointment.status.toLowerCase() === this.statusFilter
-        : true;
-      const matchesClass = this.classFilter
-        ? appointment && appointment.classroomId === Number(this.classFilter)
-        : true;
-      return matchesStatus && matchesClass;
+      const matchesDegree = this.degreeFilter ? exam.degreeId === Number(this.degreeFilter) : true;
+      const matchesYear = this.yearFilter ? exam.year === Number(this.yearFilter) : true;
+      return matchesDegree && matchesYear;
     });
   }
+   
 
   loadExams(): void {
     this.examService.getExams().subscribe({
@@ -101,6 +107,30 @@ export class AdminComponent implements OnInit {
         this.snackBarService.show('Eroare la preluarea salilor!', 'error');
       },
     });
+  }
+
+  loadGroups(): void {
+    this.groupService.getGroups().subscribe({
+      next: (data: Group[]) => {
+        this.groups = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea grupelor:', err);
+        this.snackBarService.show('Eroare la preluarea grupelor!', 'error');
+      }
+    })
+  }
+
+  loadDegrees(): void {
+    this.degreeService.getDegrees().subscribe({
+      next: (data: Degree[]) => {
+        this.degrees = data;
+      },
+      error: (err) => {
+        console.error('Eroare la preluarea specializarilor:', err);
+        this.snackBarService.show('Eroare la preluarea specializarilor!', 'error');
+      }
+    })
   }
 
   getUserForProfessor(userId: number): User | null {
