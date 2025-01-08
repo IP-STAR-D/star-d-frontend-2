@@ -11,6 +11,7 @@ import { StatusTranslationService } from '../../services/translation.service';
 import { SnackBarService } from '../../services/snack-bar.service';
 import { ClassroomService } from '../../services/classroom.service';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { Classroom } from '../../models/classroom.model';
 import { User } from '../../models/user.model';
 import { ProfessorService } from '../../services/professor.service';
@@ -27,7 +28,7 @@ import { AppSetting } from '../../models/app-setting.model';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatCardModule],
+  imports: [FormsModule, CommonModule, MatCardModule, MatButtonModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
 })
