@@ -1,9 +1,24 @@
-<button
-  (click)="toggleVisibility()"
-  class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
->
-  {{ isVisible ? "Afișează programări" : "Afișează examene" }}
-</button>
+<div class="flex justify-between items-center mb-4">
+  <!-- Toggle Visibility Button -->
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="toggleVisibility()"
+    class="px-4"
+  >
+    {{ isVisible ? "Afișează programări" : "Afișează examene" }}
+  </button>
+
+  <!-- Toggle Email Setting Button -->
+  <button
+    mat-raised-button
+    [color]="isEmailEnabled ? 'accent' : 'warn'"
+    (click)="toggleEmailSetting()"
+  >
+    {{ isEmailEnabled ? "Dezactivează trimiterea de emailuri" : "Activează trimiterea de emailuri" }}
+  </button>
+</div>
+
 
 <main *ngIf="isVisible">
   <!-- Codul tău HTML pentru examene -->

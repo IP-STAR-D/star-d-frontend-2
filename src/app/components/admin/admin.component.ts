@@ -21,6 +21,8 @@ import { GroupService } from '../../services/group.service';
 import { Group } from '../../models/group.model';
 import { DegreeService } from '../../services/degree.service';
 import { Degree } from '../../models/degree.model';
+import { AppSettingService } from '../../services/app-setting.service';
+import { AppSetting } from '../../models/app-setting.model';
 
 @Component({
   selector: 'app-admin',
@@ -42,6 +44,7 @@ export class AdminComponent implements OnInit {
   degreeFilter: string = ''; 
   yearFilter: string = '';
   isVisible: boolean = true;
+  isEmailEnabled: boolean = false;
 
   constructor(
     private router: Router,
@@ -54,7 +57,8 @@ export class AdminComponent implements OnInit {
     private studentService: StudentService,
     private classroomService: ClassroomService,
     private groupService: GroupService,
-    private degreeService: DegreeService
+    private degreeService: DegreeService,
+    private appSettingService: AppSettingService
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +66,7 @@ export class AdminComponent implements OnInit {
     this.loadAppointments();
     this.loadGroups();
     this.loadDegrees();
+    this.loadInitialSettings();
   }
 
   applyFilters(): void {
@@ -192,5 +197,37 @@ export class AdminComponent implements OnInit {
   toggleVisibility() {
     this.isVisible = !this.isVisible;
     this.applyFilters(); // Reaplică filtrele după schimbarea vizibilității
+  }
+
+  loadInitialSettings(): void {
+    this.appSettingService.getSettings().subscribe({
+      next: (response: AppSetting[]) => {
+        const sendEmailsSetting = response.find((setting) => setting.name === 'sendEmails');
+        if (sendEmailsSetting && sendEmailsSetting.value !== undefined) {
+          this.isEmailEnabled = sendEmailsSetting.value;
+        } else {
+          this.snackBarService.show('Setarea "sendEmails" nu a fost găsită sau este invalidă!', 'error');
+        }
+      },
+      error: () => {
+        this.snackBarService.show('Eroare la preluarea setărilor!', 'error');
+      },
+    });
+  }
+
+  toggleEmailSetting(): void {
+    const updatedSetting = !this.isEmailEnabled;
+    this.appSettingService.updateAppSetting('sendEmails', {name: 'sendEmails', value: updatedSetting}).subscribe({
+      next: () => {
+        this.isEmailEnabled = updatedSetting;
+        const message = updatedSetting
+          ? 'Trimiterea de emailuri a fost activată!'
+          : 'Trimiterea de emailuri a fost dezactivată!';
+        this.snackBarService.show(message, 'success');
+      },
+      error: () => {
+        this.snackBarService.show('Eroare la actualizarea setărilor!', 'error');
+      },
+    });
   }
 }
