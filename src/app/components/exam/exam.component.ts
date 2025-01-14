@@ -198,7 +198,7 @@ export class ExamComponent {
         this.myAppointments = data;
 
         this.myAppointments.sort((a, b) => {
-          const statusOrder = ['scheduled', 'pending', 'canceled', 'rejected'];
+          const statusOrder = ['scheduled', 'pending', 'rejected', 'canceled'];
           const statusComparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
           if (statusComparison !== 0) {
             return statusComparison;
