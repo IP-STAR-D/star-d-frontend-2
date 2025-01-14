@@ -407,6 +407,13 @@ export class ExamComponent {
           this.snackBarService.show('Eroare la anularea programarii.', 'error');
         },
       });
+
+      this.setFormDisabledState(false);
+
+      this.selectedDate = null;
+      this.selectedTimeStart = null;
+      this.selectedTimeEnd = null;
+      this.classroomId = null;
     }
   }
 
